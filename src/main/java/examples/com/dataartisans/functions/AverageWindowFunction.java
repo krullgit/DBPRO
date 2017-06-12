@@ -15,20 +15,19 @@ public class AverageWindowFunction implements WindowFunction<KeyedDataPoint<Doub
 	    int count = 0;
 	    double winsum = 0;
 	    String winKey = "";
-	    
+
 	    // get the sum of the elements in the window
 	    for (KeyedDataPoint<Double> in: input) {
-	      winsum = winsum + in.getValue(); 
+	      winsum = winsum + in.getValue();
 	      count++;
-	      winKey = in.getKey(); // TODO: this just need to be done once ...??? also counting would not be necessary, how to get the size of this window?
 	    }
-	    
-	    Double avg = winsum/(1.0 * count);	    
+
+	    Double avg = winsum/(1.0 * count);
 	    System.out.println("MovingAverageFunction: winsum=" +  winsum + "  count=" + count + "  avg=" + avg + "  time=" + window.getStart());
-	    
+
 	    KeyedDataPoint<Double> windowAvg = new KeyedDataPoint<>(winKey,window.getEnd(), avg);
-	    
-	    	    
+
+
 	    out.collect(windowAvg);
 	    
 	  }

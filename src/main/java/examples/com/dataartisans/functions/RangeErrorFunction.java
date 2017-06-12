@@ -5,10 +5,9 @@ import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.streaming.api.functions.windowing.WindowFunction;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
+import examples.com.dataartisans.functions.buffer;
 
-/**
- * Created by franziska on 08.06.17.
- */
+
 public class RangeErrorFunction implements WindowFunction<KeyedDataPoint<Double>, KeyedDataPoint<Double>, Tuple, TimeWindow> {
 
     @Override
@@ -20,15 +19,19 @@ public class RangeErrorFunction implements WindowFunction<KeyedDataPoint<Double>
         // get the sum of the elements in the window
         for (KeyedDataPoint<Double> in: input) {
             range = in.getValue();
-            if (range > 0.3) {
+            if (range > 0.27) {
                 test = 1;
+                buffer.bufferextend = true;
+                System.out.println("TRUE");
+                buffer.bufferAlertElement = in;
             } else {
                 test = 0;
             }
-            winKey = in.getKey(); // TODO: this just need to be done once ...??? also counting would not be necessary, how to get the size of this window?
+            winKey = in.getKey();
+
         }
 
-        System.out.println("MovingAverageFunction: range=" +  range + " test = " + test + "  time=" + window.getStart());
+        //System.out.println("MovingAverageFunction: range=" +  range + " test = " + test + "  time=" + window.getStart());
 
         KeyedDataPoint<Double> windowAvg = new KeyedDataPoint<>(winKey,window.getEnd(), test);
 

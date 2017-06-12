@@ -1,6 +1,8 @@
 package examples.com.dataartisans.data;
 
-public class KeyedDataPoint<T> extends DataPoint<T> {
+import java.io.Serializable;
+
+public class KeyedDataPoint<T> extends DataPoint<T> implements Serializable {
 
   private String key;
 

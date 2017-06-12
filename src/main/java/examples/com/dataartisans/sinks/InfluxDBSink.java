@@ -43,7 +43,7 @@ public class InfluxDBSink<T extends DataPoint<? extends Number>> extends RichSin
     if(dataPoint instanceof KeyedDataPoint){
       builder.tag("key", ((KeyedDataPoint) dataPoint).getKey());
     }
-
+    
     Point p = builder.build();
 
     influxDB.write(dataBaseName, "autogen", p);

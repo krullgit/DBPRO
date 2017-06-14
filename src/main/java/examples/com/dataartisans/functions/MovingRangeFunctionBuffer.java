@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import static java.time.temporal.ChronoUnit.SECONDS;
 
 public class MovingRangeFunctionBuffer implements WindowFunction<KeyedDataPoint<Double>, KeyedDataPoint<Double>, Tuple, TimeWindow> {
-    public static boolean bufferextend = false;
-    public static long bufferAlertElementTime = 0;
-    public static ArrayList<KeyedDataPoint<Double>> bufferlist = new ArrayList<KeyedDataPoint<Double>>();
+    public boolean bufferextend = false;
+    public long bufferAlertElementTime = 0;
+    public ArrayList<KeyedDataPoint<Double>> bufferlist = new ArrayList<KeyedDataPoint<Double>>();
     @Override
     public void apply(Tuple arg0, TimeWindow window, Iterable<KeyedDataPoint<Double>> input, Collector<KeyedDataPoint<Double>> out) {
         double max = 0;
@@ -30,9 +30,7 @@ public class MovingRangeFunctionBuffer implements WindowFunction<KeyedDataPoint<
             } else if (in.getValue() > max) {
                 max = in.getValue();
             }
-
             bufferlist.add(in);
-
         }
         //TODO: Send Buffer as far as an ELement arrives
         if (bufferextend == false) {
@@ -40,12 +38,11 @@ public class MovingRangeFunctionBuffer implements WindowFunction<KeyedDataPoint<
                 bufferlist.remove(0);
             }
         } else {
-
             if (Instant.ofEpochMilli(bufferAlertElementTime).atZone(ZoneId.of("UTC+1")).toLocalTime().plus(70, SECONDS).compareTo(Instant.ofEpochMilli(bufferlist.get(bufferlist.size()-1).getTimeStampMs()).atZone(ZoneId.of("UTC+1")).toLocalTime()) < 0){
                 bufferextend = false;
 
                 for (KeyedDataPoint<Double> ready : bufferlist) {
-                    System.out.println(Instant.ofEpochMilli(ready.getTimeStampMs()).atZone(ZoneId.of("UTC+1")).toLocalTime());
+                    //System.out.println(Instant.ofEpochMilli(ready.getTimeStampMs()).atZone(ZoneId.of("UTC+1")).toLocalTime());
                     out.collect(ready);
                 }
                 bufferlist.clear();

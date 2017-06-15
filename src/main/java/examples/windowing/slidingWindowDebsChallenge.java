@@ -1,135 +1,284 @@
 package examples.windowing;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
-import examples.com.dataartisans.functions.MovingRangeFunction;
-import examples.com.dataartisans.functions.RangeErrorFunction;
+import examples.com.dataartisans.functions.*;
+
+import org.apache.flink.api.common.functions.JoinFunction;
 import org.apache.flink.api.common.functions.RichMapFunction;
+import org.apache.flink.api.common.state.ValueState;
+import org.apache.flink.api.common.state.ValueStateDescriptor;
+import org.apache.flink.api.common.typeinfo.TypeHint;
+import org.apache.flink.api.common.typeinfo.TypeInformation;
+import org.apache.flink.api.common.typeutils.base.IntSerializer;
+import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.co.CoFlatMapFunction;
+import org.apache.flink.streaming.api.functions.co.RichCoFlatMapFunction;
 import org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor;
 import examples.com.dataartisans.data.KeyedDataPoint;
-import examples.com.dataartisans.functions.AverageWindowFunction;
-import examples.com.dataartisans.functions.MovingAverageFunction;
 import examples.com.dataartisans.sinks.InfluxDBSink;
 import org.apache.flink.streaming.api.windowing.assigners.SlidingEventTimeWindows;
+import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.triggers.ContinuousEventTimeTrigger;
 import org.apache.flink.streaming.api.windowing.triggers.CountTrigger;
+import org.apache.flink.types.StringValue;
+import org.apache.flink.util.Collector;
+import scala.Tuple2;
 
 
 public class slidingWindowDebsChallenge {
 
-
+	public static ArrayList<KeyedDataPoint<Double>> testlist = new ArrayList<KeyedDataPoint<Double>>();
 	public static void main(String[] args) throws Exception {
+
 
 		final ParameterTool params = ParameterTool.fromArgs(args);
 
+
 		final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-		
 		env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
-		@SuppressWarnings({"rawtypes", "serial"})
-		
-		
+
+		//mf01
 		// Read and parse the original data
-		DataStream<KeyedDataPoint<Double>> debsData;
-		
+		DataStream<KeyedDataPoint<Double>> debsDataMf01;
+
 		// test with this parameters: -input ./src/main/resources/DEBS2012-ChallengeData-Sample.csv
-		debsData = 	env.readTextFile(params.get("input"))				      
-				      .map(new ParseData());
-				    
-		// This is the original data
-		debsData.addSink(new InfluxDBSink<>("debsData"));
+		debsDataMf01 = 	env.readTextFile(params.get("input"))
+				.setParallelism(1)
+				.map(new ParseData("mf01"));
 
-		// First aggregate the data per second
-		DataStream<KeyedDataPoint<Double>> debsDataAggSec = debsData
-				// TODO: it seems we need to add time stamps to the data, how do we do when the timestamps do not come from the file or stream ???
+		debsDataMf01.addSink(new InfluxDBSink<>("debsDataMf01"));
+		// Operator 1 -> compute the avg and the range of mf01
+		// TODO: allowedLateness must be implemented to consider late cumming events
+		// TODO: read about watermarks in flink. surely not unimportant
+		// TODO: set parallelism to what? 3? Is it important anyway? Because the keyby has only one value ("mf01")
+		DataStream<KeyedDataPoint<Double>> debsDataRangeBufferMf01 = debsDataMf01
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
-				// 
+				.setParallelism(1)
 				.keyBy("key")
-				// DEBS data is sampled 1000Hz <-- 1000 samples per second
-				.timeWindow(Time.seconds(1)).trigger(ContinuousEventTimeTrigger.of(Time.seconds(1)))
-				//			
-				.apply(new AverageWindowFunction());					   
-			     
-		debsDataAggSec.addSink(new InfluxDBSink<>("debsDataAggSec"));
+				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
+				// .trigger(CountTrigger.of(10)) why should be use a trigger? By the way: I don't get why triggers exist :(
+				.apply(new MovingRangeFunctionBuffer());
+		debsDataRangeBufferMf01.addSink(new InfluxDBSink<>("debsDataRangeBufferMf01"));
 
+		DataStream<KeyedDataPoint<Double>> debsDataRangeMf01 = debsDataMf01
+				.assignTimestampsAndWatermarks(new ExtractTimestamp())
+				.setParallelism(1)
+				.keyBy("key")
+				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
+				// .trigger(CountTrigger.of(10)) why should be use a trigger? By the way: I don't get why triggers exist :(
+				.apply(new MovingRangeFunction());
+		debsDataRangeMf01.addSink(new InfluxDBSink<>("debsDataRangeMf01"));
+
+		// Operator 4 -> "is range over 0.3?"
+		DataStream<KeyedDataPoint<Double>> debsDataRangeErrors = debsDataRangeMf01
+				.keyBy("key")
+				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
+				.apply(new RangeErrorFunction());
+		debsDataRangeErrors.addSink(new InfluxDBSink<>("debsDataRangeErrorsMf01"));
+
+		DataStream<KeyedDataPoint<Double>> debsDataAvgMf01 = debsDataMf01
+				.assignTimestampsAndWatermarks(new ExtractTimestamp())
+				.setParallelism(1)
+				.keyBy("key")
+				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
+				.apply(new MovingAverageFunction());
+		debsDataAvgMf01.addSink(new InfluxDBSink<>("debsDataAvgMf01"));
+		DataStream<KeyedDataPoint<Double>> debsDataAvgPwrMf01 = debsDataAvgMf01
+				.keyBy("key")
+				.window(SlidingEventTimeWindows.of(Time.seconds(60), Time.seconds(60)))
+				.apply(new MovingAverageFunctionOperator());
+		debsDataAvgPwrMf01.addSink(new InfluxDBSink<>("debsDataAvgPwrMf01"));
+
+		//mf02
+		DataStream<KeyedDataPoint<Double>> debsDataMf02;
+		debsDataMf02 = 	env.readTextFile(params.get("input"))
+				.setParallelism(1)
+				.map(new ParseData("mf02"));
+		debsDataMf02.addSink(new InfluxDBSink<>("debsDataMf02"));
+		DataStream<KeyedDataPoint<Double>> debsDataRangeBufferMf02 = debsDataMf02
+				.assignTimestampsAndWatermarks(new ExtractTimestamp())
+				.setParallelism(1)
+				.keyBy("key")
+				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
+				.apply(new MovingRangeFunctionBuffer());
+		debsDataRangeBufferMf02.addSink(new InfluxDBSink<>("debsDataRangeBufferMf02"));
+		DataStream<KeyedDataPoint<Double>> debsDataRangeMf02 = debsDataMf02
+				.assignTimestampsAndWatermarks(new ExtractTimestamp())
+				.setParallelism(1)
+				.keyBy("key")
+				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
+				.apply(new MovingRangeFunction());
+		debsDataRangeMf02.addSink(new InfluxDBSink<>("debsDataRangeMf02"));
+		DataStream<KeyedDataPoint<Double>> debsDataRangeErrorsMf02 = debsDataRangeMf02
+				.keyBy("key")
+				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
+				.apply(new RangeErrorFunction());
+		debsDataRangeErrorsMf02.addSink(new InfluxDBSink<>("debsDataRangeErrorsMf02"));
+		DataStream<KeyedDataPoint<Double>> debsDataAvgMf02 = debsDataMf02
+
+				.assignTimestampsAndWatermarks(new ExtractTimestamp())
+				.keyBy("key")
+				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
+				.apply(new MovingAverageFunction());
+		debsDataAvgMf02.addSink(new InfluxDBSink<>("debsDataAvgMf02"));
+		DataStream<KeyedDataPoint<Double>> debsDataAvgPwrMf02 = debsDataAvgMf02
+				.keyBy("key")
+				.window(SlidingEventTimeWindows.of(Time.seconds(60), Time.seconds(60)))
+				.apply(new MovingAverageFunctionOperator());
+		debsDataAvgPwrMf02.addSink(new InfluxDBSink<>("debsDataAvgPwrMf02"));
 		
-		// Now apply a window average function to smooth the data
-		debsDataAggSec
-		        .keyBy("key")
-				.window(SlidingEventTimeWindows.of(Time.seconds(10), Time.seconds(1))).trigger(CountTrigger.of(10))
-				//
-				.apply(new MovingAverageFunction())
-				// save the average data for every key in a different series
-			    .name("debsDataMovAvg")
-			    //.print();
-			    .addSink(new InfluxDBSink<>("debsDataMovAvg"));
 
-		DataStream<KeyedDataPoint<Double>> debsDataRange = debsData
+
+		//mf03
+		DataStream<KeyedDataPoint<Double>> debsDataMf03;
+		debsDataMf03 = 	env.readTextFile(params.get("input"))
+				.setParallelism(1)
+				.map(new ParseData("mf03"));
+		debsDataMf03.addSink(new InfluxDBSink<>("debsDataMf03"));
+		DataStream<KeyedDataPoint<Double>> debsDataRangeBufferMf03 = debsDataMf03
+
+				.assignTimestampsAndWatermarks(new ExtractTimestamp())
+				.setParallelism(1)
+				.keyBy("key")
+				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
+				.apply(new MovingRangeFunctionBuffer());
+		debsDataRangeBufferMf03.addSink(new InfluxDBSink<>("debsDataRangeBufferMf03"));
+
+		//∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨
+
+		env.readTextFile(params.get("input"))
+
+				.setParallelism(1)
+				.map(new ParseData("mf03"))
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
 				.keyBy("key")
-				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1))).trigger(CountTrigger.of(10))
+				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
+				.apply(new MovingRangeFunction())
+				.addSink(new InfluxDBSink<>("debsDataRangeMf03"));
+		//∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧
+
+		DataStream<KeyedDataPoint<Double>> debsDataRangeMf03;
+		debsDataRangeMf03 = env.readTextFile(params.get("input"))
+				.setParallelism(1)
+				.map(new ParseData("mf03"))
+				.assignTimestampsAndWatermarks(new ExtractTimestamp())
+				.keyBy("key")
+				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new MovingRangeFunction());
 
-				debsDataRange.addSink(new InfluxDBSink<>("debsDataRange"));
+		DataStream<KeyedDataPoint<Double>> debsDataRangeErrorsMf03 = debsDataRangeMf03
 
-		DataStream<KeyedDataPoint<Double>> debsDataRangeErrors = debsDataRange
 				.keyBy("key")
-				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1))).trigger(CountTrigger.of(10))
+				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new RangeErrorFunction());
+		debsDataRangeErrorsMf03.addSink(new InfluxDBSink<>("debsDataRangeErrorsMf03"));
+		DataStream<KeyedDataPoint<Double>> debsDataAvgMf03 = debsDataMf03
+				.assignTimestampsAndWatermarks(new ExtractTimestamp())
+				.keyBy("key")
+				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
+				.apply(new MovingAverageFunction());
+		debsDataAvgMf03.addSink(new InfluxDBSink<>("debsDataAvgMf03"));
+		DataStream<KeyedDataPoint<Double>> debsDataAvgPwrMf03 = debsDataAvgMf03
+				.keyBy("key")
+				.window(SlidingEventTimeWindows.of(Time.seconds(60), Time.seconds(60)))
+				.apply(new MovingAverageFunctionOperator());
+		debsDataAvgPwrMf03.addSink(new InfluxDBSink<>("debsDataAvgPwrMf03"));
 
-				debsDataRangeErrors.addSink(new InfluxDBSink<>("debsDataRangeErrors"));
-
-		env.execute("slidingWindowExample");
+		env.execute("debsChallenge");
 	}
+}
+		/*DataStream<KeyedDataPoint<Double>> debsdata20sec70sec = debsData
+				.flatMap(new buffer());
 
-                                                                       
-	private static class ParseData extends RichMapFunction<String, KeyedDataPoint<Double>> {
+		debsdata20sec70sec.addSink(new InfluxDBSink<>("debsdata20sec70sec"));*/
+		/*
+		SingleOutputStreamOperator<KeyedDataPoint<Double>> keyedDataPointSingleOutputStreamOperator = debsData.connect(debsDataRangeErrors).keyBy("key", "key").flatMap(
+				new CoFlatMapFunction<KeyedDataPoint<Double>, KeyedDataPoint<Double>, KeyedDataPoint<Double>>() {
+					private transient ValueState<KeyedDataPoint<Double>> state;
+
+					private final ValueStateDescriptor<Integer> count =
+							new ValueStateDescriptor<>("count", IntSerializer.INSTANCE, 0);
+
+
+					@Override
+					public void flatMap2(KeyedDataPoint<Double> value, Collector<KeyedDataPoint<Double>> out) throws Exception {
+
+					}
+
+					@Override
+					public void flatMap1(KeyedDataPoint<Double> value, Collector<KeyedDataPoint<Double>> out) throws Exception {
+
+						System.out.println(count.getDefaultValue());
+						System.out.println("OUT1");
+
+						out.collect(value);
+					}
+				});
+		*/
+
+		/*
+		DataStream<KeyedDataPoint<Double>> debsDatajoin = debsData
+				.assignTimestampsAndWatermarks(new ExtractTimestamp())
+				.keyBy("key")
+				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
+				.apply(new MovingRangeFunction());
+		*/
+		/*
+		//∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨
+		DataStream<KeyedDataPoint<Double>> debsDatajoined = debsDataRange.join(debsDataRangeErrors)
+				.where(new NameKeySelector()).equalTo(new NameKeySelector())
+    			.window(TumblingEventTimeWindows.of(Time.seconds(1)))
+				.apply (new MyJoinFunction());
+
+
+		debsDatajoined.addSink(new InfluxDBSink<>("debsDataJoined"));
+
+		//∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧
+		*/
+
+
+
+	//∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨
+
+	/*
+	public static class MyJoinFunction
+			implements
+			JoinFunction<KeyedDataPoint<Double>, KeyedDataPoint<Double>, KeyedDataPoint<Double>> {
+
 		private static final long serialVersionUID = 1L;
 
-		@Override    //Tuple4<key, timestamp, nano, measure
-		public KeyedDataPoint<Double> map(String record) {
-			
-			//String rawData = record.substring(1, record.length() - 1);
-			String rawData = record;
-			String[] data = rawData.split("\t");
-			
-						
-			// the data look like this... and we want to process mf01 <- field 2
-			// for this example I remove the first line...
-			// ts	index	mf01	mf02	mf03	pc13	pc14	pc15	pc25	pc26	pc27	res	bm05	bm06	bm07	bm08	bm09	bm10	pp01	pp02	pp03	pp04	pp05	pp06	pp07	pp08	pp09	pp10	pp11	pp12	pp13	pp14	pp15	pp16	pp17	pp18	pp19	pp20	pp21	pp31	pp32	pp33	pp34	pp35	pp36	pc01	pc02	pc03	pc04	pc05	pc06	pc19	pc20	pc21	pc22	pc23
-			// 2012-02-22T16:46:28.9670320+00:00	2556001	13056	14406	8119	0071	0193	0150	0000	0000	0000	0000	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	0	1	0	0	1	0	0	0	0	0	0	0	0	0	0	0
-			// 2012-02-22T16:46:28.9770284+00:00	2556002	13054	14405	8119	0069	0192	0151	0000	0000	0000	0000	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	0	1	0	0	1	0	0	0	0	0	0	0	0	0	0	0
-			// 2012-02-22T16:46:28.9870216+00:00	2556003	13049	14404	8119	0070	0194	0152	0000	0000	0000	0000	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	0	0	0	1	0	0	1	0	0	0	0	0	0	0	0	0	0	0						   
-			
-				
-			Instant ts = LocalDateTime.parse(data[0], DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSXXX"))
-			            //.atZone(ZoneId.systemDefault())
-					    .atZone(ZoneId.of("UTC"))
-			            .toInstant();
-			            			
-			int ts_nano = ts.getNano();					
-			long millisSinceEpoch = ts.toEpochMilli() + (ts_nano/1000000); 				
-			System.out.println("  ts:" + data[0] + "   " + millisSinceEpoch + "  nano:" + ts_nano + " mf01:" + Double.valueOf(data[2]));
-		
-			
-			return new KeyedDataPoint<Double>("mf01", millisSinceEpoch, Double.valueOf(data[2]));
+		private KeyedDataPoint<Double> joined = new KeyedDataPoint<>();
+
+		@Override
+		public KeyedDataPoint<Double> join(KeyedDataPoint<Double> first,
+										   KeyedDataPoint<Double> second) throws Exception {
+
+
+			return new KeyedDataPoint<Double>("mf01", first.getTimeStampMs(), second.getValue()+1.0);
 		}
 	}
-	
-	private static class ExtractTimestamp extends AscendingTimestampExtractor<KeyedDataPoint<Double>> {
+	private static class NameKeySelector implements KeySelector<KeyedDataPoint<Double>, String> {
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public long extractAscendingTimestamp(KeyedDataPoint<Double> element) {
-			return element.getTimeStampMs();
+		public String getKey(KeyedDataPoint<Double> value) throws Exception {
+			return String.valueOf(value.getTimeStampMs());
 		}
 	}
-	
-}
+	//∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧
+	*/
+
+

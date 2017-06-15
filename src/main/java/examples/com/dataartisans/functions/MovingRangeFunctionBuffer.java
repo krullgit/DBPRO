@@ -51,7 +51,7 @@ public class MovingRangeFunctionBuffer implements WindowFunction<KeyedDataPoint<
 
         Double range = (max-min)/max;
 
-        if (range > 0.27){
+        if (range > 0.3){
             bufferAlertElementTime = window.getEnd();
             bufferextend = true;
         }

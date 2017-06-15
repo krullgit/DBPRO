@@ -59,11 +59,10 @@ public class slidingWindowDebsChallenge {
 				.setParallelism(1)
 				.map(new ParseData("mf01"));
 
-		debsDataMf01.addSink(new InfluxDBSink<>("debsDataMf01"));
+		//debsDataMf01.addSink(new InfluxDBSink<>("debsDataMf01"));
 		// Operator 1 -> compute the avg and the range of mf01
 		// TODO: allowedLateness must be implemented to consider late cumming events
 		// TODO: read about watermarks in flink. surely not unimportant
-		// TODO: set parallelism to what? 3? Is it important anyway? Because the keyby has only one value ("mf01")
 		DataStream<KeyedDataPoint<Double>> debsDataRangeBufferMf01 = debsDataMf01
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
 				.setParallelism(1)
@@ -107,7 +106,7 @@ public class slidingWindowDebsChallenge {
 		debsDataMf02 = 	env.readTextFile(params.get("input"))
 				.setParallelism(1)
 				.map(new ParseData("mf02"));
-		debsDataMf02.addSink(new InfluxDBSink<>("debsDataMf02"));
+		//debsDataMf02.addSink(new InfluxDBSink<>("debsDataMf02"));
 		DataStream<KeyedDataPoint<Double>> debsDataRangeBufferMf02 = debsDataMf02
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
 				.setParallelism(1)
@@ -147,7 +146,7 @@ public class slidingWindowDebsChallenge {
 		debsDataMf03 = 	env.readTextFile(params.get("input"))
 				.setParallelism(1)
 				.map(new ParseData("mf03"));
-		debsDataMf03.addSink(new InfluxDBSink<>("debsDataMf03"));
+		//debsDataMf03.addSink(new InfluxDBSink<>("debsDataMf03"));
 		DataStream<KeyedDataPoint<Double>> debsDataRangeBufferMf03 = debsDataMf03
 
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
@@ -178,9 +177,7 @@ public class slidingWindowDebsChallenge {
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new MovingRangeFunction());
-
 		DataStream<KeyedDataPoint<Double>> debsDataRangeErrorsMf03 = debsDataRangeMf03
-
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new RangeErrorFunction());

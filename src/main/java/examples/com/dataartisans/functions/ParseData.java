@@ -56,13 +56,13 @@ public class ParseData extends RichMapFunction<String, KeyedDataPoint<Double>> {
         }else{
             wait = 0;
         }*/
-
+        /*
         try {
             TimeUnit.MILLISECONDS.sleep(40);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
+        */
         return new KeyedDataPoint<Double>(datatype, millisSinceEpoch, Double.valueOf(data[index]));
     }
 }

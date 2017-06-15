@@ -16,7 +16,7 @@ public class RangeErrorFunction implements WindowFunction<KeyedDataPoint<Double>
 
         for (KeyedDataPoint<Double> in: input) {
             range = in.getValue();
-            if (range > 0.27) {
+            if (range > 0.3) {
                 test = 1;
             } else {
                 test = 0;

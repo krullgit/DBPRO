@@ -24,6 +24,8 @@ public class ParseData extends RichMapFunction<String, KeyedDataPoint<Double>> {
                 break;
         }
     }
+    long lastTime = 0;
+    long wait = 0;
     @Override
     public KeyedDataPoint<Double> map(String record) {
 
@@ -46,9 +48,18 @@ public class ParseData extends RichMapFunction<String, KeyedDataPoint<Double>> {
         int ts_nano = ts.getNano();
         long millisSinceEpoch = ts.toEpochMilli() + (ts_nano/1000000);
 
+        if(lastTime == 0){
+            lastTime = millisSinceEpoch;
+        }
+        if (lastTime - millisSinceEpoch > 0){
+            wait = lastTime - millisSinceEpoch;
+        }else{
+            wait = 0;
+        }
+
 
         try {
-            TimeUnit.NANOSECONDS.sleep(100);
+            TimeUnit.MILLISECONDS.sleep(wait);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

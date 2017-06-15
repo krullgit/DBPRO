@@ -56,6 +56,7 @@ public class slidingWindowDebsChallenge {
 
 		// test with this parameters: -input ./src/main/resources/DEBS2012-ChallengeData-Sample.csv
 		debsDataMf01 = 	env.readTextFile(params.get("input"))
+				.setParallelism(1)
 				.map(new ParseData("mf01"));
 
 		debsDataMf01.addSink(new InfluxDBSink<>("debsDataMf01"));
@@ -65,6 +66,7 @@ public class slidingWindowDebsChallenge {
 		// TODO: set parallelism to what? 3? Is it important anyway? Because the keyby has only one value ("mf01")
 		DataStream<KeyedDataPoint<Double>> debsDataRangeBufferMf01 = debsDataMf01
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
+				.setParallelism(1)
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				// .trigger(CountTrigger.of(10)) why should be use a trigger? By the way: I don't get why triggers exist :(
@@ -73,6 +75,7 @@ public class slidingWindowDebsChallenge {
 
 		DataStream<KeyedDataPoint<Double>> debsDataRangeMf01 = debsDataMf01
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
+				.setParallelism(1)
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				// .trigger(CountTrigger.of(10)) why should be use a trigger? By the way: I don't get why triggers exist :(
@@ -88,6 +91,7 @@ public class slidingWindowDebsChallenge {
 
 		DataStream<KeyedDataPoint<Double>> debsDataAvgMf01 = debsDataMf01
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
+				.setParallelism(1)
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new MovingAverageFunction());
@@ -101,26 +105,31 @@ public class slidingWindowDebsChallenge {
 		//mf02
 		DataStream<KeyedDataPoint<Double>> debsDataMf02;
 		debsDataMf02 = 	env.readTextFile(params.get("input"))
+				.setParallelism(1)
 				.map(new ParseData("mf02"));
 		debsDataMf02.addSink(new InfluxDBSink<>("debsDataMf02"));
 		DataStream<KeyedDataPoint<Double>> debsDataRangeBufferMf02 = debsDataMf02
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
+				.setParallelism(1)
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new MovingRangeFunctionBuffer());
 		debsDataRangeBufferMf02.addSink(new InfluxDBSink<>("debsDataRangeBufferMf02"));
 		DataStream<KeyedDataPoint<Double>> debsDataRangeMf02 = debsDataMf02
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
+				.setParallelism(1)
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new MovingRangeFunction());
 		debsDataRangeMf02.addSink(new InfluxDBSink<>("debsDataRangeMf02"));
 		DataStream<KeyedDataPoint<Double>> debsDataRangeErrorsMf02 = debsDataRangeMf02
+
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new RangeErrorFunction());
 		debsDataRangeErrorsMf02.addSink(new InfluxDBSink<>("debsDataRangeErrorsMf02"));
 		DataStream<KeyedDataPoint<Double>> debsDataAvgMf02 = debsDataMf02
+
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
@@ -137,18 +146,23 @@ public class slidingWindowDebsChallenge {
 		//mf03
 		DataStream<KeyedDataPoint<Double>> debsDataMf03;
 		debsDataMf03 = 	env.readTextFile(params.get("input"))
+				.setParallelism(1)
 				.map(new ParseData("mf03"));
 		debsDataMf03.addSink(new InfluxDBSink<>("debsDataMf03"));
 		DataStream<KeyedDataPoint<Double>> debsDataRangeBufferMf03 = debsDataMf03
+
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
+				.setParallelism(1)
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new MovingRangeFunctionBuffer());
 		debsDataRangeBufferMf03.addSink(new InfluxDBSink<>("debsDataRangeBufferMf03"));
 
 		//∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨
-		DataStream<KeyedDataPoint<Double>> debsDataRangeMf03;
+
 		env.readTextFile(params.get("input"))
+
+				.setParallelism(1)
 				.map(new ParseData("mf03"))
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
 				.keyBy("key")
@@ -157,7 +171,9 @@ public class slidingWindowDebsChallenge {
 				.addSink(new InfluxDBSink<>("debsDataRangeMf03"));
 		//∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧
 
+		DataStream<KeyedDataPoint<Double>> debsDataRangeMf03;
 		debsDataRangeMf03 = env.readTextFile(params.get("input"))
+				.setParallelism(1)
 				.map(new ParseData("mf03"))
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
 				.keyBy("key")
@@ -165,6 +181,7 @@ public class slidingWindowDebsChallenge {
 				.apply(new MovingRangeFunction());
 
 		DataStream<KeyedDataPoint<Double>> debsDataRangeErrorsMf03 = debsDataRangeMf03
+
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new RangeErrorFunction());

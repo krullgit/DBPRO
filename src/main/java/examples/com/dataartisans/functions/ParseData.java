@@ -47,7 +47,7 @@ public class ParseData extends RichMapFunction<String, KeyedDataPoint<Double>> {
 
         int ts_nano = ts.getNano();
         long millisSinceEpoch = ts.toEpochMilli() + (ts_nano/1000000);
-
+        /*
         if(lastTime == 0){
             lastTime = millisSinceEpoch;
         }
@@ -55,11 +55,10 @@ public class ParseData extends RichMapFunction<String, KeyedDataPoint<Double>> {
             wait = lastTime - millisSinceEpoch;
         }else{
             wait = 0;
-        }
-
+        }*/
 
         try {
-            TimeUnit.MILLISECONDS.sleep(wait);
+            TimeUnit.MILLISECONDS.sleep(40);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

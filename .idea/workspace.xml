@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f547f8fc-1b95-4bb8-8c5c-930dba44413a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/examples/windowing/slidingWindowDebsChallenge.class" afterPath="$PROJECT_DIR$/target/classes/examples/windowing/slidingWindowDebsChallenge.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ParseData.java" afterPath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ParseData.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java" afterPath="$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java" />
     </list>
@@ -18,11 +16,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="slidingWindowDebsChallenge.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="slidingWindowDebsChallenge.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="235">
-              <caret line="59" column="40" lean-forward="false" selection-start-line="59" selection-start-column="36" selection-end-line="59" selection-end-column="40" />
+            <state relative-caret-position="249">
+              <caret line="69" column="29" lean-forward="true" selection-start-line="69" selection-start-column="29" selection-end-line="69" selection-end-column="29" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#2026#2050#0" expanded="true" />
@@ -54,11 +52,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ParseData.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ParseData.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ParseData.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="63" column="32" lean-forward="true" selection-start-line="63" selection-start-column="32" selection-end-line="63" selection-end-column="32" />
+            <state relative-caret-position="246">
+              <caret line="39" column="29" lean-forward="true" selection-start-line="39" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -148,8 +146,8 @@
         <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ExtractTimestamp.java" />
         <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingAverageFunction.java" />
         <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingAverageFunctionOperator.java" />
-        <option value="$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java" />
         <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ParseData.java" />
+        <option value="$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java" />
       </list>
     </option>
   </component>
@@ -1201,12 +1199,12 @@
       <workItem from="1497021854902" duration="958000" />
       <workItem from="1497023194113" duration="26503000" />
       <workItem from="1497123863455" duration="82203000" />
-      <workItem from="1497516878240" duration="3773000" />
+      <workItem from="1497516878240" duration="5415000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="137155000" />
+    <option name="totallyTimeSpent" value="138797000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1625,22 +1623,22 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ParseData.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="246">
+          <caret line="39" column="29" lean-forward="true" selection-start-line="39" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="235">
-          <caret line="59" column="40" lean-forward="false" selection-start-line="59" selection-start-column="36" selection-end-line="59" selection-end-column="40" />
+        <state relative-caret-position="249">
+          <caret line="69" column="29" lean-forward="true" selection-start-line="69" selection-start-column="29" selection-end-line="69" selection-end-column="29" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#2026#2050#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ParseData.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="63" column="32" lean-forward="true" selection-start-line="63" selection-start-column="32" selection-end-line="63" selection-end-column="32" />
-          <folding />
         </state>
       </provider>
     </entry>

@@ -123,7 +123,6 @@ public class slidingWindowDebsChallenge {
 				.apply(new MovingRangeFunction());
 		debsDataRangeMf02.addSink(new InfluxDBSink<>("debsDataRangeMf02"));
 		DataStream<KeyedDataPoint<Double>> debsDataRangeErrorsMf02 = debsDataRangeMf02
-
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new RangeErrorFunction());

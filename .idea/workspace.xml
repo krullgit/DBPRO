@@ -2,57 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f547f8fc-1b95-4bb8-8c5c-930dba44413a" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ExtractTimestamp.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingAverageFunctionOperator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ParseData.java" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/AmplifierFunction.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/AssignKeyFunction.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/AverageWindowFunction.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/SawtoothFunction.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/SineWaveFunction.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/buffer.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/bufferdata.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/jobs/OsconJob.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/sources/TimestampSource.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowMimicData.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowWaterLevel.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/examples/windowing/sliding_window_energy.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/functions/AmplifierFunction.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/functions/AssignKeyFunction.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/functions/AverageWindowFunction.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/functions/MovingAverageFunction.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/functions/SawtoothFunction.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/functions/SineWaveFunction.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/functions/buffer.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/functions/bufferdata.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/jobs/OsconJob.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/sources/TimestampSource.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/windowing/slidingWindowDebsChallenge$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/windowing/slidingWindowDebsChallenge$ExtractTimestamp.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/windowing/slidingWindowDebsChallenge$ParseData.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/windowing/slidingWindowMimicData$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/windowing/slidingWindowMimicData$ExtractTimestamp.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/windowing/slidingWindowMimicData$ParseData.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/windowing/slidingWindowMimicData.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/windowing/slidingWindowWaterLevel$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/windowing/slidingWindowWaterLevel$ExtractTimestamp.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/windowing/slidingWindowWaterLevel$ParseData.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/windowing/slidingWindowWaterLevel.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/windowing/sliding_window_energy$1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/windowing/sliding_window_energy$MovingAverageFunction1.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/windowing/sliding_window_energy$ParseSalesData.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/windowing/sliding_window_energy$SalesTimestamp.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/examples/windowing/sliding_window_energy.class" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/functions/MovingRangeFunction.class" afterPath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/functions/MovingRangeFunction.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/functions/MovingRangeFunctionBuffer.class" afterPath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/functions/MovingRangeFunctionBuffer.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/functions/RangeErrorFunction.class" afterPath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/functions/RangeErrorFunction.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/examples/windowing/slidingWindowDebsChallenge.class" afterPath="$PROJECT_DIR$/target/classes/examples/windowing/slidingWindowDebsChallenge.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingAverageFunction.java" afterPath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingAverageFunction.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingRangeFunction.java" afterPath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingRangeFunction.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingRangeFunctionBuffer.java" afterPath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingRangeFunctionBuffer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/RangeErrorFunction.java" afterPath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/RangeErrorFunction.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/sinks/InfluxDBSink.java" afterPath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/sinks/InfluxDBSink.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ParseData.java" afterPath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ParseData.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java" afterPath="$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
@@ -69,11 +19,21 @@
       <file leaf-file-name="slidingWindowDebsChallenge.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="339">
-              <caret line="63" column="59" lean-forward="false" selection-start-line="63" selection-start-column="59" selection-end-line="63" selection-end-column="59" />
+            <state relative-caret-position="288">
+              <caret line="159" column="52" lean-forward="true" selection-start-line="159" selection-start-column="52" selection-end-line="159" selection-end-column="52" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ParseData.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ParseData.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="313">
+              <caret line="53" column="9" lean-forward="true" selection-start-line="53" selection-start-column="9" selection-end-line="53" selection-end-column="9" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -89,7 +49,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>streaming</find>
       <find>table</find>
       <find>assert</find>
       <find>tream</find>
@@ -119,6 +78,7 @@
       <find>fieldName</find>
       <find>error</find>
       <find>dataart</find>
+      <find>addsin</find>
     </findStrings>
     <replaceStrings>
       <replace>f03</replace>
@@ -160,10 +120,10 @@
         <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingRangeFunctionBuffer.java" />
         <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingRangeFunction.java" />
         <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ExtractTimestamp.java" />
-        <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ParseData.java" />
         <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingAverageFunction.java" />
-        <option value="$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java" />
         <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingAverageFunctionOperator.java" />
+        <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ParseData.java" />
+        <option value="$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java" />
       </list>
     </option>
   </component>
@@ -1214,12 +1174,12 @@
       <workItem from="1497013972239" duration="7564000" />
       <workItem from="1497021854902" duration="958000" />
       <workItem from="1497023194113" duration="26503000" />
-      <workItem from="1497123863455" duration="76583000" />
+      <workItem from="1497123863455" duration="80727000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="127762000" />
+    <option name="totallyTimeSpent" value="131906000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1716,16 +1676,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ParseData.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13">
-          <caret line="24" column="5" lean-forward="true" selection-start-line="24" selection-start-column="5" selection-end-line="24" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingRangeFunction.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="210">
@@ -1756,10 +1706,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ParseData.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="313">
+          <caret line="53" column="9" lean-forward="true" selection-start-line="53" selection-start-column="9" selection-end-line="53" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="339">
-          <caret line="63" column="59" lean-forward="false" selection-start-line="63" selection-start-column="59" selection-end-line="63" selection-end-column="59" />
+        <state relative-caret-position="288">
+          <caret line="159" column="52" lean-forward="true" selection-start-line="159" selection-start-column="52" selection-end-line="159" selection-end-column="52" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

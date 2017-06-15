@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.TimeUnit;
 
 public class ParseData extends RichMapFunction<String, KeyedDataPoint<Double>> {
     private static final long serialVersionUID = 1L;
@@ -44,6 +45,14 @@ public class ParseData extends RichMapFunction<String, KeyedDataPoint<Double>> {
 
         int ts_nano = ts.getNano();
         long millisSinceEpoch = ts.toEpochMilli() + (ts_nano/1000000);
+
+
+        try {
+            TimeUnit.NANOSECONDS.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         return new KeyedDataPoint<Double>(datatype, millisSinceEpoch, Double.valueOf(data[index]));
     }
 }

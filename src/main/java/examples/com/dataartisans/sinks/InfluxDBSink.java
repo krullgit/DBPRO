@@ -14,7 +14,9 @@ public class InfluxDBSink<T extends DataPoint<? extends Number>> extends RichSin
 
   private transient InfluxDB influxDB = null;
   private static String dataBaseName = "DBPRO";
-  private static String fieldName = "value";
+  private static String fieldName1 = "mf01";
+  private static String fieldName2 = "mf02";
+  private static String fieldName3 = "mf03";
   private String measurement;
 
   public InfluxDBSink(String measurement){
@@ -38,7 +40,9 @@ public class InfluxDBSink<T extends DataPoint<? extends Number>> extends RichSin
   public void invoke(T dataPoint) throws Exception {
     Point.Builder builder = Point.measurement(measurement)
             .time(dataPoint.getTimeStampMs(), TimeUnit.MILLISECONDS)
-            .addField(fieldName, dataPoint.getValue());
+            .addField(fieldName1, dataPoint.getMf01())
+            .addField(fieldName2, dataPoint.getMf02())
+            .addField(fieldName3, dataPoint.getMf03());
 
     if(dataPoint instanceof KeyedDataPoint){
       builder.tag("key", ((KeyedDataPoint) dataPoint).getKey());

@@ -36,6 +36,8 @@ import org.apache.flink.streaming.api.windowing.triggers.CountTrigger;
 import org.apache.flink.types.StringValue;
 import org.apache.flink.util.Collector;
 import scala.Tuple2;
+import examples.com.dataartisans.functions.ExtractTimestamp;
+
 
 
 public class slidingWindowDebsChallenge {
@@ -71,7 +73,7 @@ public class slidingWindowDebsChallenge {
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				// .trigger(CountTrigger.of(10)) why should be use a trigger? By the way: I don't get why triggers exist :(
 				.apply(new MovingRangeFunctionBuffer());
-		debsDataRangeBufferMf01.addSink(new InfluxDBSink<>("debsDataRangeBufferMf01"));
+		debsDataRangeBufferMf01.addSink(new InfluxDBSink<>("debsDataRangeBuffer"));
 
 		DataStream<KeyedDataPoint<Double>> debsDataRangeMf01 = debsDataMf01
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
@@ -114,7 +116,7 @@ public class slidingWindowDebsChallenge {
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new MovingRangeFunctionBuffer());
-		debsDataRangeBufferMf02.addSink(new InfluxDBSink<>("debsDataRangeBufferMf02"));
+		debsDataRangeBufferMf02.addSink(new InfluxDBSink<>("debsDataRangeBuffer"));
 		DataStream<KeyedDataPoint<Double>> debsDataRangeMf02 = debsDataMf02
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
 				.setParallelism(1)
@@ -128,7 +130,6 @@ public class slidingWindowDebsChallenge {
 				.apply(new RangeErrorFunction());
 		debsDataRangeErrorsMf02.addSink(new InfluxDBSink<>("debsDataRangeErrorsMf02"));
 		DataStream<KeyedDataPoint<Double>> debsDataAvgMf02 = debsDataMf02
-
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
@@ -139,7 +140,7 @@ public class slidingWindowDebsChallenge {
 				.window(SlidingEventTimeWindows.of(Time.seconds(60), Time.seconds(60)))
 				.apply(new MovingAverageFunctionOperator());
 		debsDataAvgPwrMf02.addSink(new InfluxDBSink<>("debsDataAvgPwrMf02"));
-		
+
 
 
 		//mf03
@@ -149,38 +150,20 @@ public class slidingWindowDebsChallenge {
 				.map(new ParseData("mf03"));
 		debsDataMf03.addSink(new InfluxDBSink<>("debsDataMf03"));
 		DataStream<KeyedDataPoint<Double>> debsDataRangeBufferMf03 = debsDataMf03
-
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
 				.setParallelism(1)
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new MovingRangeFunctionBuffer());
-		debsDataRangeBufferMf03.addSink(new InfluxDBSink<>("debsDataRangeBufferMf03"));
-
-		//∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨
-
-		env.readTextFile(params.get("input"))
-
-				.setParallelism(1)
-				.map(new ParseData("mf03"))
+		debsDataRangeBufferMf03.addSink(new InfluxDBSink<>("debsDataRangeBuffer"));
+		DataStream<KeyedDataPoint<Double>> debsDataRangeMf03 = debsDataMf03
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
-				.keyBy("key")
-				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
-				.apply(new MovingRangeFunction())
-				.addSink(new InfluxDBSink<>("debsDataRangeMf03"));
-		//∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧
-
-		DataStream<KeyedDataPoint<Double>> debsDataRangeMf03;
-		debsDataRangeMf03 = env.readTextFile(params.get("input"))
 				.setParallelism(1)
-				.map(new ParseData("mf03"))
-				.assignTimestampsAndWatermarks(new ExtractTimestamp())
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new MovingRangeFunction());
-
+		debsDataRangeMf03.addSink(new InfluxDBSink<>("debsDataRangeMf03"));
 		DataStream<KeyedDataPoint<Double>> debsDataRangeErrorsMf03 = debsDataRangeMf03
-
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new RangeErrorFunction());
@@ -198,6 +181,13 @@ public class slidingWindowDebsChallenge {
 		debsDataAvgPwrMf03.addSink(new InfluxDBSink<>("debsDataAvgPwrMf03"));
 
 		env.execute("debsChallenge");
+		/*System.out.println("Avg delay: "+ExtractTimestamp.delaysum/ExtractTimestamp.count);
+		System.out.println("timeone: "+ExtractTimestamp.timeone);
+		System.out.println("timetwo: "+ExtractTimestamp.timetwo);
+		System.out.println("delaysum: "+ExtractTimestamp.delaysum);
+		System.out.println("count ALL: "+ExtractTimestamp.count);
+		System.out.println("count: "+ExtractTimestamp.count1000);*/
+
 	}
 }
 		/*DataStream<KeyedDataPoint<Double>> debsdata20sec70sec = debsData

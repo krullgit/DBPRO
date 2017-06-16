@@ -13,15 +13,34 @@ public class MovingAverageFunction implements WindowFunction<KeyedDataPoint<Doub
 		double winsum = 0;
 		String winKey = input.iterator().next().getKey();
 
-		// get the sum of the elements in the window
-		for (KeyedDataPoint<Double> in: input) {
-			winsum = winsum + in.getValue();
-			count++;
+		Double avgMf01 = 0.0;
+		Double avgMf02 = 0.0;
+		Double avgMf03 = 0.0;
+
+		// get max and min of the elements in the window
+		if(winKey.equals("mf01")){
+			for (KeyedDataPoint<Double> in: input) {
+				winsum = winsum + in.getMf01();
+				count++;
+			}
+			avgMf01 = winsum/(1.0 * count);
+		}
+		if(winKey.equals("mf02")){
+			for (KeyedDataPoint<Double> in: input) {
+				winsum = winsum + in.getMf02();
+				count++;
+			}
+			avgMf02 = winsum/(1.0 * count);
+		}
+		if(winKey.equals("mf03")){
+			for (KeyedDataPoint<Double> in: input) {
+				winsum = winsum + in.getMf03();
+				count++;
+			}
+			avgMf03 = winsum/(1.0 * count);
 		}
 
-		Double avg = winsum/(1.0 * count);
-
-		KeyedDataPoint<Double> windowAvg = new KeyedDataPoint<>(winKey,window.getEnd(), avg);
+		KeyedDataPoint<Double> windowAvg = new KeyedDataPoint<>(winKey,window.getEnd(), avgMf01,avgMf02,avgMf03);
 
 		out.collect(windowAvg);
 	}

@@ -1,16 +1,26 @@
 package examples.com.dataartisans.functions;
 
 import examples.com.dataartisans.data.KeyedDataPoint;
+import org.apache.flink.api.common.time.Time;
 import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.streaming.api.functions.windowing.WindowFunction;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
 
+import java.sql.Timestamp;
+
 public class MovingAverageFunctionOperator implements WindowFunction<KeyedDataPoint<Double>, KeyedDataPoint<Double>, Tuple, TimeWindow> {
+
+
 	@Override
 	public void apply(Tuple arg0, TimeWindow window, Iterable<KeyedDataPoint<Double>> input, Collector<KeyedDataPoint<Double>> out) {
 
+
+
 		String winKey = input.iterator().next().getKey();
+
+
+
 
 		Double pwrMf01 = 0.0;
 		Double pwrMf02 = 0.0;
@@ -31,7 +41,6 @@ public class MovingAverageFunctionOperator implements WindowFunction<KeyedDataPo
 		}
 
 		KeyedDataPoint<Double> windowAvg = new KeyedDataPoint<>(winKey,window.getEnd(), pwrMf01,pwrMf02,pwrMf03);
-
 		out.collect(windowAvg);
 	}
 }

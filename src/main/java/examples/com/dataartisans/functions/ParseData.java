@@ -3,6 +3,7 @@ package examples.com.dataartisans.functions;
 import examples.com.dataartisans.data.KeyedDataPoint;
 import org.apache.flink.api.common.functions.RichMapFunction;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -26,8 +27,25 @@ public class ParseData extends RichMapFunction<String, KeyedDataPoint<Double>> {
     }
     long lastTime = 0;
     long wait = 0;
+
+    public Timestamp last;
+    public long sum = 0;
+    public long countSum = 0;
     @Override
     public KeyedDataPoint<Double> map(String record) {
+
+
+        if(datatype.equals("mf01")) {
+            if(last == null){
+                last = new Timestamp(System.currentTimeMillis());
+            }
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            long diff = now.getTime() - last.getTime();
+            sum += diff;
+            countSum++;
+            last = now;
+            System.out.println("" + datatype + " " + sum / countSum);
+        }
 
         String rawData = record;
         String[] data = rawData.split("\t");
@@ -56,13 +74,13 @@ public class ParseData extends RichMapFunction<String, KeyedDataPoint<Double>> {
         }else{
             wait = 0;
         }*/
-        /*
+/*
         try {
-            TimeUnit.MILLISECONDS.sleep();
+            TimeUnit.MILLISECONDS.sleep(1);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        */
+*/
         return new KeyedDataPoint<Double>(datatype, millisSinceEpoch, Double.valueOf(data[2]),Double.valueOf(data[3]),Double.valueOf(data[4]));
     }
 }

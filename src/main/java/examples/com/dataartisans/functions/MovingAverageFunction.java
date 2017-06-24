@@ -6,12 +6,18 @@ import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
 import examples.com.dataartisans.data.KeyedDataPoint;
 
+import java.sql.Timestamp;
+
 public class MovingAverageFunction implements WindowFunction<KeyedDataPoint<Double>, KeyedDataPoint<Double>, Tuple, TimeWindow> {
+
+
 	@Override
 	public void apply(Tuple arg0, TimeWindow window, Iterable<KeyedDataPoint<Double>> input, Collector<KeyedDataPoint<Double>> out) {
 		int count = 0;
 		double winsum = 0;
 		String winKey = input.iterator().next().getKey();
+
+
 
 		Double avgMf01 = 0.0;
 		Double avgMf02 = 0.0;

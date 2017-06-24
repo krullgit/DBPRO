@@ -19,7 +19,6 @@ public class ExtractTimestamp implements AssignerWithPeriodicWatermarks<KeyedDat
 
     @Override
     public long extractTimestamp(KeyedDataPoint<Double> element, long previousElementTimestamp) {
-        System.out.println("test");
         long timestamp = element.getTimeStampMs();
 
         currentMaxTimestamp = Math.max(timestamp, currentMaxTimestamp);

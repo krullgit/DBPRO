@@ -20,7 +20,7 @@ public class kafkaProducer{
         props.put("key.serializer","org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
-        String topicName = "HealthTest";
+        String topicName = "HealthTest3";
         String key = "Key";
 
         File testfile = new File("/Users/matthes/Desktop/passt_nicht_in_gdrive/dbpro/grafana/git/DBPRO/target/classes/DEBS2012-ChallengeData-Sample.csv");
@@ -31,7 +31,7 @@ public class kafkaProducer{
             while ((line = reader.readLine()) != null) {
                 ProducerRecord<String, String> record = new ProducerRecord<>(topicName,key, line);
                 producer.send(record);
-                Thread.sleep(1000);
+
             }
         } catch (Exception e) {
             e.printStackTrace();

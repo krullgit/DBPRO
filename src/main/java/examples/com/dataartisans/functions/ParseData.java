@@ -13,18 +13,7 @@ import java.util.concurrent.TimeUnit;
 public class ParseData extends RichMapFunction<String, KeyedDataPoint<Double>> {
     private static final long serialVersionUID = 1L;
     String datatype = "";
-    int index = -1;
-    public ParseData(String datatype){
-        this.datatype = datatype;
-        switch (datatype) {
-            case "mf01": index = 2;
-                break;
-            case "mf02": index = 3;
-                break;
-            case "mf03": index = 4;
-                break;
-        }
-    }
+   
     long lastTime = 0;
     long wait = 0;
 
@@ -35,7 +24,7 @@ public class ParseData extends RichMapFunction<String, KeyedDataPoint<Double>> {
     public KeyedDataPoint<Double> map(String record) {
 
 
-        if(datatype.equals("mf01")) {
+        /*if(datatype.equals("mf01")) {
             if(last == null){
                 last = new Timestamp(System.currentTimeMillis());
             }
@@ -45,7 +34,7 @@ public class ParseData extends RichMapFunction<String, KeyedDataPoint<Double>> {
             countSum++;
             last = now;
             System.out.println("" + datatype + " " + sum / countSum);
-        }
+        }*/
 
         String rawData = record;
         String[] data = rawData.split("\t");

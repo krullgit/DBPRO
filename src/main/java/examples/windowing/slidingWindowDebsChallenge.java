@@ -36,6 +36,7 @@ import org.apache.flink.streaming.api.windowing.triggers.ContinuousEventTimeTrig
 import org.apache.flink.streaming.api.windowing.triggers.CountTrigger;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
 
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer08;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 import org.apache.flink.types.StringValue;
 import org.apache.flink.util.Collector;
@@ -56,26 +57,27 @@ public class slidingWindowDebsChallenge {
 
 		final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 		env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
-		env.enableCheckpointing(5000);
 
 
 
 
 
-		Properties properties = new Properties();
+
+		/*Properties properties = new Properties();
 		properties.setProperty("bootstrap.servers", "localhost:9092");
 // only required for Kafka 0.8
 		properties.setProperty("zookeeper.connect", "localhost:2181");
 		properties.setProperty("group.id", "test");
 
-		FlinkKafkaConsumer010<String> myConsumer =
-				new FlinkKafkaConsumer010<>("HealthTest", new SimpleStringSchema(), properties);
+		FlinkKafkaConsumer08<String> myConsumer =
+				new FlinkKafkaConsumer08<>("HealthTest3", new SimpleStringSchema(), properties);
+
 
 
 		DataStream<KeyedDataPoint<Double>> debsDataMf01 = env
 				.setParallelism(1)
 				.addSource(myConsumer)
-				.map(new ParseData("mf01"));
+				.map(new ParseData("mf01"));*/
 
 
 
@@ -88,12 +90,14 @@ public class slidingWindowDebsChallenge {
 
 		//mf01
 		// Read and parse the original data
-		//DataStream<KeyedDataPoint<Double>> debsDataMf01;
+		DataStream<KeyedDataPoint<Double>> debsData;
+		debsData = env.readTextFile(params.get("input"))
+				.setParallelism(1)
+				.map(new ParseData());
 
 		// test with this parameters: -input ./src/main/resources/DEBS2012-ChallengeData-Sample.csv
-//		debsDataMf01 = 	env.readTextFile(params.get("input"))
-//				.setParallelism(1)
-//				.map(new ParseData("mf01"));
+		DataStream<KeyedDataPoint<Double>> debsDataMf01 = 	debsData
+				.map(new ParseData2("mf01"));
 
 		debsDataMf01.addSink(new InfluxDBSink<>("debsDataMf01"));
 		// Operator 1 -> compute the avg and the range of mf01
@@ -137,13 +141,12 @@ public class slidingWindowDebsChallenge {
 				.window(SlidingEventTimeWindows.of(Time.seconds(60), Time.seconds(60)))
 				.apply(new MovingAverageFunctionOperator());
 		debsDataAvgPwrMf01.addSink(new InfluxDBSink<>("debsDataAvgPwrMf01"));
-/*
+
 
 		//mf02
-		DataStream<KeyedDataPoint<Double>> debsDataMf02;
-		debsDataMf02 = 	env.readTextFile(params.get("input"))
-				.setParallelism(1)
-				.map(new ParseData("mf02"));
+		DataStream<KeyedDataPoint<Double>> debsDataMf02 = 	debsData
+				.map(new ParseData2("mf02"));
+
 		debsDataMf02.addSink(new InfluxDBSink<>("debsDataMf02"));
 		DataStream<KeyedDataPoint<Double>> debsDataRangeBufferMf02 = debsDataMf02
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
@@ -179,10 +182,8 @@ public class slidingWindowDebsChallenge {
 
 
 		//mf03
-		DataStream<KeyedDataPoint<Double>> debsDataMf03;
-		debsDataMf03 = 	env.readTextFile(params.get("input"))
-				.setParallelism(1)
-				.map(new ParseData("mf03"));
+		DataStream<KeyedDataPoint<Double>> debsDataMf03 = 	debsData
+				.map(new ParseData2("mf02"));
 		debsDataMf03.addSink(new InfluxDBSink<>("debsDataMf03"));
 		DataStream<KeyedDataPoint<Double>> debsDataRangeBufferMf03 = debsDataMf03
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
@@ -214,7 +215,7 @@ public class slidingWindowDebsChallenge {
 				.window(SlidingEventTimeWindows.of(Time.seconds(60), Time.seconds(60)))
 				.apply(new MovingAverageFunctionOperator());
 		debsDataAvgPwrMf03.addSink(new InfluxDBSink<>("debsDataAvgPwrMf03"));
-*/
+
 
 		env.execute("debsChallenge");
 		/*System.out.println("Avg delay: "+ExtractTimestamp.delaysum/ExtractTimestamp.count);

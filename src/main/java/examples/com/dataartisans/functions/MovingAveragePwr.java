@@ -9,7 +9,7 @@ import org.apache.flink.util.Collector;
 
 import java.sql.Timestamp;
 
-public class MovingAverageFunctionOperator implements WindowFunction<KeyedDataPoint<Double>, KeyedDataPoint<Double>, Tuple, TimeWindow> {
+public class MovingAveragePwr implements WindowFunction<KeyedDataPoint<Double>, KeyedDataPoint<Double>, Tuple, TimeWindow> {
 
 
 	@Override
@@ -27,18 +27,15 @@ public class MovingAverageFunctionOperator implements WindowFunction<KeyedDataPo
 		Double pwrMf03 = 0.0;
 
 		// get max and min of the elements in the window
-		if(winKey.equals("mf01")){
 			double avgMf01 = input.iterator().next().getMf01();
 			pwrMf01 = 208/(Math.pow(avgMf01,(1.0/3)));
-		}
-		if(winKey.equals("mf02")){
+
 			double avgMf02 = input.iterator().next().getMf02();
 			pwrMf02 = 208/(Math.pow(avgMf02,(1.0/3)));
-		}
-		if(winKey.equals("mf03")){
+
 			double avgMf03 = input.iterator().next().getMf03();
 			pwrMf03 = 208/(Math.pow(avgMf03,(1.0/3)));
-		}
+
 
 		KeyedDataPoint<Double> windowAvg = new KeyedDataPoint<>(winKey,window.getEnd(), pwrMf01,pwrMf02,pwrMf03);
 		out.collect(windowAvg);

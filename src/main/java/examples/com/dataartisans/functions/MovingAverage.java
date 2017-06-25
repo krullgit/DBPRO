@@ -8,13 +8,15 @@ import examples.com.dataartisans.data.KeyedDataPoint;
 
 import java.sql.Timestamp;
 
-public class MovingAverageFunction implements WindowFunction<KeyedDataPoint<Double>, KeyedDataPoint<Double>, Tuple, TimeWindow> {
+public class MovingAverage implements WindowFunction<KeyedDataPoint<Double>, KeyedDataPoint<Double>, Tuple, TimeWindow> {
 
 
 	@Override
 	public void apply(Tuple arg0, TimeWindow window, Iterable<KeyedDataPoint<Double>> input, Collector<KeyedDataPoint<Double>> out) {
 		int count = 0;
-		double winsum = 0;
+		double winsumMf01 = 0;
+		double winsumMf02 = 0;
+		double winsumMf03 = 0;
 		String winKey = input.iterator().next().getKey();
 
 
@@ -24,27 +26,16 @@ public class MovingAverageFunction implements WindowFunction<KeyedDataPoint<Doub
 		Double avgMf03 = 0.0;
 
 		// get max and min of the elements in the window
-		if(winKey.equals("mf01")){
-			for (KeyedDataPoint<Double> in: input) {
-				winsum = winsum + in.getMf01();
-				count++;
-			}
-			avgMf01 = winsum/(1.0 * count);
+		for (KeyedDataPoint<Double> in: input) {
+			winsumMf01 = winsumMf01 + in.getMf01();
+			winsumMf02 = winsumMf02 + in.getMf02();
+			winsumMf03 = winsumMf03 + in.getMf03();
+			count++;
 		}
-		if(winKey.equals("mf02")){
-			for (KeyedDataPoint<Double> in: input) {
-				winsum = winsum + in.getMf02();
-				count++;
-			}
-			avgMf02 = winsum/(1.0 * count);
-		}
-		if(winKey.equals("mf03")){
-			for (KeyedDataPoint<Double> in: input) {
-				winsum = winsum + in.getMf03();
-				count++;
-			}
-			avgMf03 = winsum/(1.0 * count);
-		}
+		avgMf01 = winsumMf01/(1.0 * count);
+		avgMf02 = winsumMf02/(1.0 * count);
+		avgMf03 = winsumMf03/(1.0 * count);
+
 
 		KeyedDataPoint<Double> windowAvg = new KeyedDataPoint<>(winKey,window.getEnd(), avgMf01,avgMf02,avgMf03);
 

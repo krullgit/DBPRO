@@ -42,7 +42,7 @@ public class slidingWindowDebsChallenge {
 		properties.setProperty("group.id", "test");
 
 		FlinkKafkaConsumer010<String> myConsumer =
-				new FlinkKafkaConsumer010<>("HealthTest9", new SimpleStringSchema(), properties);
+				new FlinkKafkaConsumer010<>("debsData", new SimpleStringSchema(), properties);
 
 		// Parse Data
 		DataStream<KeyedDataPoint<Double>> debsData = env

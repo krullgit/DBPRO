@@ -41,20 +41,20 @@ public class slidingWindowDebsChallenge {
 		properties.setProperty("bootstrap.servers", "localhost:9092");
 		properties.setProperty("group.id", "test");
 
-		FlinkKafkaConsumer010<String> myConsumer =
+		/*FlinkKafkaConsumer010<String> myConsumer =
 				new FlinkKafkaConsumer010<>("debsData4", new SimpleStringSchema(), properties);
 
 		// Parse Data
 		DataStream<KeyedDataPoint<Double>> debsData = env
 				.setParallelism(1)
 				.addSource(myConsumer)
-				.map(new ParseData());
+				.map(new ParseData());*/
 
 		// READ FROM FILE
 		// test with this parameters: -input ./src/main/resources/DEBS2012-ChallengeData-Sample.csv
-		/*DataStream<KeyedDataPoint<Double>> debsData = env.readTextFile(params.get("input"))
+		DataStream<KeyedDataPoint<Double>> debsData = env.readTextFile(params.get("input"))
 				.setParallelism(1)
-				.map(new ParseData());*/
+				.map(new ParseData());
 
 		debsData.addSink(new InfluxDBSink<>("debsData"));
 

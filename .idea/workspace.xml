@@ -2,12 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f547f8fc-1b95-4bb8-8c5c-930dba44413a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/functions/MovingRangeBuffer.class" afterPath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/functions/MovingRangeBuffer.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/kafka/kafkaProducer.class" afterPath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/kafka/kafkaProducer.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/examples/windowing/slidingWindowDebsChallenge.class" afterPath="$PROJECT_DIR$/target/classes/examples/windowing/slidingWindowDebsChallenge.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingRangeBuffer.java" afterPath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingRangeBuffer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/kafka/kafkaProducer.java" afterPath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/kafka/kafkaProducer.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java" afterPath="$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
@@ -24,8 +18,8 @@
       <file leaf-file-name="slidingWindowDebsChallenge.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="159">
-              <caret line="33" column="0" lean-forward="true" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+            <state relative-caret-position="173">
+              <caret line="50" column="40" lean-forward="true" selection-start-line="50" selection-start-column="40" selection-end-line="50" selection-end-column="40" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#1034#1058#0" expanded="true" />
@@ -150,8 +144,8 @@
         <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/RangeErrorFunction.java" />
         <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ExtractTimestamp.java" />
         <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingRangeBuffer.java" />
-        <option value="$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java" />
         <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/kafka/kafkaProducer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java" />
       </list>
     </option>
   </component>
@@ -953,12 +947,12 @@
       <workItem from="1497516878240" duration="5415000" />
       <workItem from="1497603696948" duration="16782000" />
       <workItem from="1498295312284" duration="60192000" />
-      <workItem from="1498728565920" duration="2556000" />
+      <workItem from="1498728565920" duration="3365000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="237814000" />
+    <option name="totallyTimeSpent" value="238623000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1233,6 +1227,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="158">
           <caret line="73" column="28" lean-forward="false" selection-start-line="73" selection-start-column="28" selection-end-line="73" selection-end-column="28" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1345,8 +1340,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="159">
-          <caret line="33" column="0" lean-forward="true" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+        <state relative-caret-position="173">
+          <caret line="50" column="40" lean-forward="true" selection-start-line="50" selection-start-column="40" selection-end-line="50" selection-end-column="40" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#1034#1058#0" expanded="true" />

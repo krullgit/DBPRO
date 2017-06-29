@@ -31,7 +31,8 @@ public class kafkaProducer{
             while ((line = reader.readLine()) != null) {
                 ProducerRecord<String, String> record = new ProducerRecord<>(topicName,key, line);
                 producer.send(record);
-                Thread.sleep(5);
+
+                Thread.sleep(10+(int)(Math.random()*10));
             }
         } catch (Exception e) {
             e.printStackTrace();

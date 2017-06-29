@@ -14,7 +14,7 @@ import org.apache.flink.streaming.api.watermark.Watermark;
 public class ExtractTimestamp implements AssignerWithPeriodicWatermarks<KeyedDataPoint<Double>> {
     private static final long serialVersionUID = 1L;
 
-    private final long maxOutOfOrderness = 0; // time to wait for late cumming tuples
+    private final long maxOutOfOrderness = 3000; // time to wait for late cumming tuples
     private long currentMaxTimestamp;
 
     // returns timestamp

@@ -1,6 +1,7 @@
 package examples.windowing;
 
 import java.util.ArrayList;
+import java.util.Properties;
 
 import examples.com.dataartisans.functions.*;
 
@@ -14,7 +15,9 @@ import org.apache.flink.streaming.api.windowing.assigners.SlidingEventTimeWindow
 import org.apache.flink.streaming.api.windowing.time.Time;
 
 import examples.com.dataartisans.functions.ExtractTimestamp;
-
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer08;
+import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 
 
 public class slidingWindowDebsChallenge {
@@ -33,30 +36,26 @@ public class slidingWindowDebsChallenge {
 		env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
 
-
-		// KAFKA TRY
-		// TODO: Kafka Tuple kommen viel zu langsam
-		/*Properties properties = new Properties();
+		// READ FROM KAFKA
+		Properties properties = new Properties();
 		properties.setProperty("bootstrap.servers", "localhost:9092");
-// only required for Kafka 0.8
-		properties.setProperty("zookeeper.connect", "localhost:2181");
 		properties.setProperty("group.id", "test");
 
-		FlinkKafkaConsumer08<String> myConsumer =
-				new FlinkKafkaConsumer08<>("HealthTest3", new SimpleStringSchema(), properties);
+		FlinkKafkaConsumer010<String> myConsumer =
+				new FlinkKafkaConsumer010<>("HealthTest9", new SimpleStringSchema(), properties);
 
-		DataStream<KeyedDataPoint<Double>> debsDataMf = env
+		// Parse Data
+		DataStream<KeyedDataPoint<Double>> debsData = env
 				.setParallelism(1)
 				.addSource(myConsumer)
+				.map(new ParseData());
+
+		// READ FROM FILE
+		// test with this parameters: -input ./src/main/resources/DEBS2012-ChallengeData-Sample.csv
+		/*DataStream<KeyedDataPoint<Double>> debsData = env.readTextFile(params.get("input"))
+				.setParallelism(1)
 				.map(new ParseData());*/
 
-
-
-		// Read and parse the original data
-		// test with this parameters: -input ./src/main/resources/DEBS2012-ChallengeData-Sample.csv
-		DataStream<KeyedDataPoint<Double>> debsData = env.readTextFile(params.get("input"))
-				.setParallelism(1)
-				.map(new ParseData());
 		debsData.addSink(new InfluxDBSink<>("debsData"));
 
 		// Save 20 sec before and 70 sec after an error

@@ -74,16 +74,17 @@ public class MovingRangeBuffer implements WindowFunction<KeyedDataPoint<Double>,
                 }
             // or additional the future 70 sec
             } else {
+
                 // is the latest tuple 70 sec in future of the last anomaly?
                 if (Instant.ofEpochMilli(bufferAlertElementTime).atZone(ZoneId.of("UTC+1")).toLocalTime().plus(70, SECONDS).compareTo(Instant.ofEpochMilli(bufferlist.get(bufferlist.size() - 1).getTimeStampMs()).atZone(ZoneId.of("UTC+1")).toLocalTime()) < 0) {
                     bufferextend = false; // since buffer is complete reset the bufferextend variable
-
-                    // save hole buffer to influx
-                    for (KeyedDataPoint<Double> ready : bufferlist) {
-                        out.collect(ready);
-                    }
-                    bufferlist.clear(); // empty buffer
                 }
+                // save hole buffer to influx
+                for (KeyedDataPoint<Double> ready : bufferlist) {
+                    out.collect(ready);
+                }
+                bufferlist.clear(); // empty buffer
+
             }
             // set bufferextend to true if one treshold is too high
             if (rangeMf01 > errortreshold || rangeMf02 > errortreshold || rangeMf03 > errortreshold) {

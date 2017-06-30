@@ -61,11 +61,13 @@ public class slidingWindowDebsChallenge {
 		// Save 20 sec before and 70 sec after an error
 		DataStream<KeyedDataPoint<Double>> debsDataRangeBuffer = debsData
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
-				.setParallelism(1)
+
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new MovingRangeBuffer(errortreshold));
-		debsDataRangeBuffer.addSink(new InfluxDBSink<>("debsDataRangeBuffer"));
+
+		debsData.writeAsText(params.get("output")).setParallelism(1);
+		//debsDataRangeBuffer.addSink(new InfluxDBSink<>("debsDataRangeBuffer"));
 
 		// calculate the range
 		DataStream<KeyedDataPoint<Double>> debsDataRange = debsData
@@ -74,14 +76,14 @@ public class slidingWindowDebsChallenge {
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new MovingRange());
-		debsDataRange.addSink(new InfluxDBSink<>("debsDataRange"));
+		//debsDataRange.addSink(new InfluxDBSink<>("debsDataRange"));
 
 		// calculate the errors based in the range
 		DataStream<KeyedDataPoint<Double>> debsDataRangeErrors = debsDataRange
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new MovingRangeError(errortreshold));
-		debsDataRangeErrors.addSink(new InfluxDBSink<>("debsDataRangeErrors"));
+		//debsDataRangeErrors.addSink(new InfluxDBSink<>("debsDataRangeErrors"));
 
 		// calculate the avg
 		DataStream<KeyedDataPoint<Double>> debsDataAvg = debsData
@@ -90,14 +92,14 @@ public class slidingWindowDebsChallenge {
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new MovingAverage());
-		debsDataAvg.addSink(new InfluxDBSink<>("debsDataAvg"));
+		//debsDataAvg.addSink(new InfluxDBSink<>("debsDataAvg"));
 
 		// calculate power consumption
 		DataStream<KeyedDataPoint<Double>> debsDataAvgPwr = debsDataAvg
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(60), Time.seconds(60)))
 				.apply(new MovingAveragePwr());
-		debsDataAvgPwr.addSink(new InfluxDBSink<>("debsDataAvgPwr"));
+		//debsDataAvgPwr.addSink(new InfluxDBSink<>("debsDataAvgPwr"));
 		
 		env.execute("debsChallenge");
 	}

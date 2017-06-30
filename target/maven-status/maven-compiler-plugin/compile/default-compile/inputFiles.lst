@@ -1,0 +1,15 @@
+/Users/matthes/Desktop/passt_nicht_in_gdrive/dbpro/grafana/git/DBPRO/src/main/java/examples/com/dataartisans/data/DataPoint.java
+/Users/matthes/Desktop/passt_nicht_in_gdrive/dbpro/grafana/git/DBPRO/src/main/java/examples/com/dataartisans/functions/MovingAveragePwr.java
+/Users/matthes/Desktop/passt_nicht_in_gdrive/dbpro/grafana/git/DBPRO/src/main/java/examples/com/dataartisans/data/KeyedDataPoint.java
+/Users/matthes/Desktop/passt_nicht_in_gdrive/dbpro/grafana/git/DBPRO/src/main/java/examples/windowing/util/TopSpeedWindowingExampleData.java
+/Users/matthes/Desktop/passt_nicht_in_gdrive/dbpro/grafana/git/DBPRO/src/main/java/examples/com/dataartisans/functions/ParseData.java
+/Users/matthes/Desktop/passt_nicht_in_gdrive/dbpro/grafana/git/DBPRO/src/main/java/examples/com/dataartisans/functions/MovingRange.java
+/Users/matthes/Desktop/passt_nicht_in_gdrive/dbpro/grafana/git/DBPRO/src/main/java/examples/windowing/util/SessionWindowingData.java
+/Users/matthes/Desktop/passt_nicht_in_gdrive/dbpro/grafana/git/DBPRO/src/main/java/examples/windowing/slidingWindowDebsChallenge.java
+/Users/matthes/Desktop/passt_nicht_in_gdrive/dbpro/grafana/git/DBPRO/src/main/java/examples/com/dataartisans/sinks/InfluxDBSink.java
+/Users/matthes/Desktop/passt_nicht_in_gdrive/dbpro/grafana/git/DBPRO/src/main/java/examples/com/dataartisans/data/ControlMessage.java
+/Users/matthes/Desktop/passt_nicht_in_gdrive/dbpro/grafana/git/DBPRO/src/main/java/examples/com/dataartisans/functions/ExtractTimestamp.java
+/Users/matthes/Desktop/passt_nicht_in_gdrive/dbpro/grafana/git/DBPRO/src/main/java/examples/com/dataartisans/functions/MovingRangeError.java
+/Users/matthes/Desktop/passt_nicht_in_gdrive/dbpro/grafana/git/DBPRO/src/main/java/examples/com/dataartisans/kafka/kafkaProducer.java
+/Users/matthes/Desktop/passt_nicht_in_gdrive/dbpro/grafana/git/DBPRO/src/main/java/examples/com/dataartisans/functions/MovingAverage.java
+/Users/matthes/Desktop/passt_nicht_in_gdrive/dbpro/grafana/git/DBPRO/src/main/java/examples/com/dataartisans/functions/MovingRangeBuffer.java

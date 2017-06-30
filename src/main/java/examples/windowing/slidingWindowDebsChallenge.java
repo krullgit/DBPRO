@@ -25,7 +25,7 @@ public class slidingWindowDebsChallenge {
 	public static ArrayList<KeyedDataPoint<Double>> testlist = new ArrayList<KeyedDataPoint<Double>>();
 	public static void main(String[] args) throws Exception {
 
-		final double errortreshold = 0.27;
+		final double errortreshold = 0.3;
 
 		final ParameterTool params = ParameterTool.fromArgs(args);
 
@@ -56,7 +56,7 @@ public class slidingWindowDebsChallenge {
 				.setParallelism(1)
 				.map(new ParseData());
 
-		debsData.addSink(new InfluxDBSink<>("debsData"));
+		/*debsData.addSink(new InfluxDBSink<>("debsData"));*/
 
 		// Save 20 sec before and 70 sec after an error
 		DataStream<KeyedDataPoint<Double>> debsDataRangeBuffer = debsData

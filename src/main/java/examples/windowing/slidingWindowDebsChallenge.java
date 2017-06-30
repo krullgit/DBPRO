@@ -119,7 +119,7 @@ public class slidingWindowDebsChallenge {
 		long end = System.currentTimeMillis();
 		System.out.println(end-start);
 		try{
-			PrintWriter writer = new PrintWriter("/Users/matthes/Desktop/passt_nicht_in_gdrive/the-file-name.txt", "UTF-8");
+			PrintWriter writer = new PrintWriter(params.get("output2"), "UTF-8");
 			writer.println(end-start);
 			writer.close();
 		} catch (IOException e) {

@@ -2,12 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f547f8fc-1b95-4bb8-8c5c-930dba44413a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/functions/ParseData.class" afterPath="$PROJECT_DIR$/target/classes/examples/com/dataartisans/functions/ParseData.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/examples/windowing/slidingWindowDebsChallenge.class" afterPath="$PROJECT_DIR$/target/classes/examples/windowing/slidingWindowDebsChallenge.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/flink-ts-0.1.jar" afterPath="$PROJECT_DIR$/target/flink-ts-0.1.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/original-flink-ts-0.1.jar" afterPath="$PROJECT_DIR$/target/original-flink-ts-0.1.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ParseData.java" afterPath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ParseData.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java" afterPath="$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
@@ -24,8 +18,8 @@
       <file leaf-file-name="slidingWindowDebsChallenge.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="242">
-              <caret line="118" column="46" lean-forward="true" selection-start-line="118" selection-start-column="46" selection-end-line="118" selection-end-column="46" />
+            <state relative-caret-position="233">
+              <caret line="122" column="38" lean-forward="true" selection-start-line="122" selection-start-column="38" selection-end-line="122" selection-end-column="38" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -972,12 +966,12 @@
       <workItem from="1497603696948" duration="16782000" />
       <workItem from="1498295312284" duration="60192000" />
       <workItem from="1498728565920" duration="24201000" />
-      <workItem from="1498843393428" duration="5574000" />
+      <workItem from="1498843393428" duration="6553000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="265033000" />
+    <option name="totallyTimeSpent" value="266012000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1373,8 +1367,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="118" column="46" lean-forward="true" selection-start-line="118" selection-start-column="46" selection-end-line="118" selection-end-column="46" />
+        <state relative-caret-position="233">
+          <caret line="122" column="38" lean-forward="true" selection-start-line="122" selection-start-column="38" selection-end-line="122" selection-end-column="38" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

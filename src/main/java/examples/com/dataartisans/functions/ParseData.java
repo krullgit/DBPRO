@@ -3,6 +3,12 @@ package examples.com.dataartisans.functions;
 import examples.com.dataartisans.data.KeyedDataPoint;
 import org.apache.flink.api.common.functions.RichMapFunction;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -31,7 +37,8 @@ public class ParseData extends RichMapFunction<String, KeyedDataPoint<Double>> {
             sum += Math.abs(System.nanoTime() - start);
             start = System.nanoTime();
             countSum++;
-            if (countSum%10000==0){ // print the avg every 10000 tuples
+            if (countSum%100000==0){ // print the avg every 10000 tuples
+
                 System.out.println(sum/countSum);
             }
 

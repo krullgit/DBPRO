@@ -1,11 +1,14 @@
 package examples.windowing;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Properties;
 
 import examples.com.dataartisans.functions.*;
 
 import org.apache.flink.api.java.utils.ParameterTool;
+import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -19,11 +22,17 @@ import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer08;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 
+import static com.sun.tools.doclint.Entity.sum;
+
 
 public class slidingWindowDebsChallenge {
 
+
+
 	public static ArrayList<KeyedDataPoint<Double>> testlist = new ArrayList<KeyedDataPoint<Double>>();
 	public static void main(String[] args) throws Exception {
+
+		long start = System.currentTimeMillis();
 
 		final double errortreshold = 0.3;
 
@@ -37,12 +46,12 @@ public class slidingWindowDebsChallenge {
 
 
 		// READ FROM KAFKA
-		Properties properties = new Properties();
+		/*Properties properties = new Properties();
 		properties.setProperty("bootstrap.servers", "localhost:9092");
 		properties.setProperty("group.id", "test");
 
-		/*FlinkKafkaConsumer010<String> myConsumer =
-				new FlinkKafkaConsumer010<>("debsData4", new SimpleStringSchema(), properties);
+		FlinkKafkaConsumer010<String> myConsumer =
+				new FlinkKafkaConsumer010<>("debsData", new SimpleStringSchema(), properties);
 
 		// Parse Data
 		DataStream<KeyedDataPoint<Double>> debsData = env
@@ -56,7 +65,7 @@ public class slidingWindowDebsChallenge {
 				.setParallelism(1)
 				.map(new ParseData());
 
-		/*debsData.addSink(new InfluxDBSink<>("debsData"));*/
+		//debsData.addSink(new InfluxDBSink<>("debsData"));
 
 		// Save 20 sec before and 70 sec after an error
 		DataStream<KeyedDataPoint<Double>> debsDataRangeBuffer = debsData
@@ -66,7 +75,7 @@ public class slidingWindowDebsChallenge {
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new MovingRangeBuffer(errortreshold));
 
-		debsData.writeAsText(params.get("output")).setParallelism(1);
+		debsDataRangeBuffer.writeAsText(params.get("output"), FileSystem.WriteMode.OVERWRITE).setParallelism(1);
 		//debsDataRangeBuffer.addSink(new InfluxDBSink<>("debsDataRangeBuffer"));
 
 		// calculate the range
@@ -76,6 +85,7 @@ public class slidingWindowDebsChallenge {
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new MovingRange());
+		debsDataRange.writeAsText(params.get("output"), FileSystem.WriteMode.OVERWRITE).setParallelism(1);
 		//debsDataRange.addSink(new InfluxDBSink<>("debsDataRange"));
 
 		// calculate the errors based in the range
@@ -83,6 +93,7 @@ public class slidingWindowDebsChallenge {
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new MovingRangeError(errortreshold));
+		debsDataRangeErrors.writeAsText(params.get("output"), FileSystem.WriteMode.OVERWRITE).setParallelism(1);
 		//debsDataRangeErrors.addSink(new InfluxDBSink<>("debsDataRangeErrors"));
 
 		// calculate the avg
@@ -92,6 +103,7 @@ public class slidingWindowDebsChallenge {
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new MovingAverage());
+		debsDataAvg.writeAsText(params.get("output"), FileSystem.WriteMode.OVERWRITE).setParallelism(1);
 		//debsDataAvg.addSink(new InfluxDBSink<>("debsDataAvg"));
 
 		// calculate power consumption
@@ -99,9 +111,20 @@ public class slidingWindowDebsChallenge {
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(60), Time.seconds(60)))
 				.apply(new MovingAveragePwr());
+		debsDataAvgPwr.writeAsText(params.get("output"), FileSystem.WriteMode.OVERWRITE).setParallelism(1);
 		//debsDataAvgPwr.addSink(new InfluxDBSink<>("debsDataAvgPwr"));
-		
+
 		env.execute("debsChallenge");
+
+		long end = System.currentTimeMillis();
+		System.out.println(end-start);
+		try{
+			PrintWriter writer = new PrintWriter("/Users/matthes/Desktop/passt_nicht_in_gdrive/the-file-name.txt", "UTF-8");
+			writer.println(end-start);
+			writer.close();
+		} catch (IOException e) {
+			// do something
+		}
 	}
 }
 		/*DataStream<KeyedDataPoint<Double>> debsdata20sec70sec = debsData

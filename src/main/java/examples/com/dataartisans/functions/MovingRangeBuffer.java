@@ -64,7 +64,6 @@ public class MovingRangeBuffer implements WindowFunction<KeyedDataPoint<Double>,
 
 
         // if bufferlist is not empty
-        //TODO: Send Buffer as far as an ELement arrives
         if(bufferlist.isEmpty() == false) {
             // check if we want to out past 20 sec in the buffer
             if (bufferextend == false) {

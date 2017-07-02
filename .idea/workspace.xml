@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f547f8fc-1b95-4bb8-8c5c-930dba44413a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/examples/windowing/slidingWindowDebsChallenge.class" afterPath="$PROJECT_DIR$/target/classes/examples/windowing/slidingWindowDebsChallenge.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/flink-ts-0.1.jar" afterPath="$PROJECT_DIR$/target/flink-ts-0.1.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/original-flink-ts-0.1.jar" afterPath="$PROJECT_DIR$/target/original-flink-ts-0.1.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/kafka/kafkaProducer.java" afterPath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/kafka/kafkaProducer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java" afterPath="$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingRangeBuffer.java" afterPath="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingRangeBuffer.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -33,11 +28,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="kafkaProducer.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="kafkaProducer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/examples/com/dataartisans/kafka/kafkaProducer.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="405">
               <caret line="31" column="15" lean-forward="true" selection-start-line="31" selection-start-column="15" selection-end-line="31" selection-end-column="15" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MovingRangeBuffer.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingRangeBuffer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="250">
+              <caret line="63" column="0" lean-forward="true" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -138,10 +143,10 @@
         <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/RangeErrorFunction.java" />
         <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ExtractTimestamp.java" />
         <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingRangeError.java" />
-        <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingRangeBuffer.java" />
         <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/ParseData.java" />
         <option value="$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java" />
         <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/kafka/kafkaProducer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingRangeBuffer.java" />
       </list>
     </option>
   </component>
@@ -946,12 +951,12 @@
       <workItem from="1498728565920" duration="24201000" />
       <workItem from="1498843393428" duration="7372000" />
       <workItem from="1498865754694" duration="230000" />
-      <workItem from="1498866100035" duration="11754000" />
+      <workItem from="1498866100035" duration="11961000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="278815000" />
+    <option name="totallyTimeSpent" value="279022000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1284,14 +1289,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingRangeBuffer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="429">
-          <caret line="84" column="17" lean-forward="true" selection-start-line="84" selection-start-column="17" selection-end-line="84" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingAveragePwr.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="457">
@@ -1331,6 +1328,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="405">
           <caret line="31" column="15" lean-forward="true" selection-start-line="31" selection-start-column="15" selection-end-line="31" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/examples/com/dataartisans/functions/MovingRangeBuffer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="250">
+          <caret line="63" column="0" lean-forward="true" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
           <folding />
         </state>
       </provider>

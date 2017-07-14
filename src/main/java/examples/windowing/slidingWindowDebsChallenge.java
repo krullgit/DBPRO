@@ -41,7 +41,7 @@ public class slidingWindowDebsChallenge {
 
 		long start = System.currentTimeMillis();
 
-		final double errortreshold = 0.27;
+		final double errortreshold = 0.3;
 
 		final ParameterTool params = ParameterTool.fromArgs(args);
 

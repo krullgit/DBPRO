@@ -1,203 +1,133 @@
 package examples.windowing;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Properties;
 
-import examples.com.dataartisans.functions.*;
+import examples.com.dataartisans.functions.ExtractTimestamp;
+import examples.com.dataartisans.functions.MovingAverage;
+import examples.com.dataartisans.functions.MovingAveragePwr;
+import examples.com.dataartisans.functions.MovingRange;
+import examples.com.dataartisans.functions.MovingRangeBuffer;
+import examples.com.dataartisans.functions.MovingRangeError;
+import examples.com.dataartisans.functions.ParseData;
 
-import org.apache.flink.api.common.functions.JoinFunction;
-import org.apache.flink.api.common.functions.RichMapFunction;
-import org.apache.flink.api.common.state.ValueState;
-import org.apache.flink.api.common.state.ValueStateDescriptor;
-import org.apache.flink.api.common.typeinfo.TypeHint;
-import org.apache.flink.api.common.typeinfo.TypeInformation;
-import org.apache.flink.api.common.typeutils.base.IntSerializer;
-import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.utils.ParameterTool;
+import org.apache.flink.core.fs.FileSystem;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
-import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.functions.co.CoFlatMapFunction;
-import org.apache.flink.streaming.api.functions.co.RichCoFlatMapFunction;
-import org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor;
 import examples.com.dataartisans.data.KeyedDataPoint;
 import examples.com.dataartisans.sinks.InfluxDBSink;
 import org.apache.flink.streaming.api.windowing.assigners.SlidingEventTimeWindows;
-import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
-import org.apache.flink.streaming.api.windowing.triggers.ContinuousEventTimeTrigger;
-import org.apache.flink.streaming.api.windowing.triggers.CountTrigger;
-import org.apache.flink.types.StringValue;
-import org.apache.flink.util.Collector;
-import scala.Tuple2;
+
+import examples.com.dataartisans.functions.ExtractTimestamp;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer08;
+import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
+
+import static com.sun.tools.doclint.Entity.sum;
 
 
 public class slidingWindowDebsChallenge {
 
+
+
 	public static ArrayList<KeyedDataPoint<Double>> testlist = new ArrayList<KeyedDataPoint<Double>>();
 	public static void main(String[] args) throws Exception {
 
+		long start = System.currentTimeMillis();
+
+		final double errortreshold = 0.27;
 
 		final ParameterTool params = ParameterTool.fromArgs(args);
 
-
+		// setup flink StreamExecutionEnvironment
 		final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+
+		// we need event time since we since it fits to our window constraints (1 and 60 seconds of event time)
 		env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
-		//mf01
-		// Read and parse the original data
-		DataStream<KeyedDataPoint<Double>> debsDataMf01;
 
+		// READ FROM KAFKA
+		Properties properties = new Properties();
+		properties.setProperty("bootstrap.servers", "localhost:9092");
+		properties.setProperty("group.id", "test");
+
+		FlinkKafkaConsumer010<String> myConsumer =
+				new FlinkKafkaConsumer010<>("debsData6", new SimpleStringSchema(), properties);
+
+		// Parse Data
+		DataStream<KeyedDataPoint<Double>> debsData = env
+				.setParallelism(1)
+				.addSource(myConsumer)
+				.map(new ParseData());
+
+		// READ FROM FILE
 		// test with this parameters: -input ./src/main/resources/DEBS2012-ChallengeData-Sample.csv
-		debsDataMf01 = 	env.readTextFile(params.get("input"))
-				.setParallelism(1)
-				.map(new ParseData("mf01"));
+		/*DataStream<KeyedDataPoint<Double>> debsData = env.readTextFile(params.get("input"))
+				.setParallelism(2)
+				.map(new ParseData());*/
 
-		debsDataMf01.addSink(new InfluxDBSink<>("debsDataMf01"));
-		// Operator 1 -> compute the avg and the range of mf01
-		// TODO: allowedLateness must be implemented to consider late cumming events
-		// TODO: read about watermarks in flink. surely not unimportant
-		// TODO: set parallelism to what? 3? Is it important anyway? Because the keyby has only one value ("mf01")
-		DataStream<KeyedDataPoint<Double>> debsDataRangeBufferMf01 = debsDataMf01
+		debsData.addSink(new InfluxDBSink<>("debsData"));
+
+		// Save 20 sec before and 70 sec after an error
+		DataStream<KeyedDataPoint<Double>> debsDataRangeBuffer = debsData
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
-				.setParallelism(1)
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
-				// .trigger(CountTrigger.of(10)) why should be use a trigger? By the way: I don't get why triggers exist :(
-				.apply(new MovingRangeFunctionBuffer());
-		debsDataRangeBufferMf01.addSink(new InfluxDBSink<>("debsDataRangeBufferMf01"));
+				.apply(new MovingRangeBuffer(errortreshold));
 
-		DataStream<KeyedDataPoint<Double>> debsDataRangeMf01 = debsDataMf01
+		//debsDataRangeBuffer.writeAsText(params.get("output"), FileSystem.WriteMode.OVERWRITE).setParallelism(1);
+		debsDataRangeBuffer.addSink(new InfluxDBSink<>("debsDataRangeBuffer"));
+
+		// calculate the range
+		DataStream<KeyedDataPoint<Double>> debsDataRange = debsData
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
-				.setParallelism(1)
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
-				// .trigger(CountTrigger.of(10)) why should be use a trigger? By the way: I don't get why triggers exist :(
-				.apply(new MovingRangeFunction());
-		debsDataRangeMf01.addSink(new InfluxDBSink<>("debsDataRangeMf01"));
+				.apply(new MovingRange());
+		//debsDataRange.writeAsText(params.get("output"), FileSystem.WriteMode.OVERWRITE).setParallelism(1);
+		debsDataRange.addSink(new InfluxDBSink<>("debsDataRange"));
 
-		// Operator 4 -> "is range over 0.3?"
-		DataStream<KeyedDataPoint<Double>> debsDataRangeErrors = debsDataRangeMf01
+		// calculate the errors based in the range
+		DataStream<KeyedDataPoint<Double>> debsDataRangeErrors = debsDataRange
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
-				.apply(new RangeErrorFunction());
-		debsDataRangeErrors.addSink(new InfluxDBSink<>("debsDataRangeErrorsMf01"));
+				.apply(new MovingRangeError(errortreshold));
+		//debsDataRangeErrors.writeAsText(params.get("output"), FileSystem.WriteMode.OVERWRITE).setParallelism(1);
+		debsDataRangeErrors.addSink(new InfluxDBSink<>("debsDataRangeErrors"));
 
-		DataStream<KeyedDataPoint<Double>> debsDataAvgMf01 = debsDataMf01
+		// calculate the avg
+		DataStream<KeyedDataPoint<Double>> debsDataAvg = debsData
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
-				.setParallelism(1)
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
-				.apply(new MovingAverageFunction());
-		debsDataAvgMf01.addSink(new InfluxDBSink<>("debsDataAvgMf01"));
-		DataStream<KeyedDataPoint<Double>> debsDataAvgPwrMf01 = debsDataAvgMf01
+				.apply(new MovingAverage());
+		//debsDataAvg.writeAsText(params.get("output"), FileSystem.WriteMode.OVERWRITE).setParallelism(1);
+		debsDataAvg.addSink(new InfluxDBSink<>("debsDataAvg"));
+
+		// calculate power consumption
+		DataStream<KeyedDataPoint<Double>> debsDataAvgPwr = debsDataAvg
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(60), Time.seconds(60)))
-				.apply(new MovingAverageFunctionOperator());
-		debsDataAvgPwrMf01.addSink(new InfluxDBSink<>("debsDataAvgPwrMf01"));
-
-		//mf02
-		DataStream<KeyedDataPoint<Double>> debsDataMf02;
-		debsDataMf02 = 	env.readTextFile(params.get("input"))
-				.setParallelism(1)
-				.map(new ParseData("mf02"));
-		debsDataMf02.addSink(new InfluxDBSink<>("debsDataMf02"));
-		DataStream<KeyedDataPoint<Double>> debsDataRangeBufferMf02 = debsDataMf02
-				.assignTimestampsAndWatermarks(new ExtractTimestamp())
-				.setParallelism(1)
-				.keyBy("key")
-				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
-				.apply(new MovingRangeFunctionBuffer());
-		debsDataRangeBufferMf02.addSink(new InfluxDBSink<>("debsDataRangeBufferMf02"));
-		DataStream<KeyedDataPoint<Double>> debsDataRangeMf02 = debsDataMf02
-				.assignTimestampsAndWatermarks(new ExtractTimestamp())
-				.setParallelism(1)
-				.keyBy("key")
-				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
-				.apply(new MovingRangeFunction());
-		debsDataRangeMf02.addSink(new InfluxDBSink<>("debsDataRangeMf02"));
-		DataStream<KeyedDataPoint<Double>> debsDataRangeErrorsMf02 = debsDataRangeMf02
-				.keyBy("key")
-				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
-				.apply(new RangeErrorFunction());
-		debsDataRangeErrorsMf02.addSink(new InfluxDBSink<>("debsDataRangeErrorsMf02"));
-		DataStream<KeyedDataPoint<Double>> debsDataAvgMf02 = debsDataMf02
-
-				.assignTimestampsAndWatermarks(new ExtractTimestamp())
-				.keyBy("key")
-				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
-				.apply(new MovingAverageFunction());
-		debsDataAvgMf02.addSink(new InfluxDBSink<>("debsDataAvgMf02"));
-		DataStream<KeyedDataPoint<Double>> debsDataAvgPwrMf02 = debsDataAvgMf02
-				.keyBy("key")
-				.window(SlidingEventTimeWindows.of(Time.seconds(60), Time.seconds(60)))
-				.apply(new MovingAverageFunctionOperator());
-		debsDataAvgPwrMf02.addSink(new InfluxDBSink<>("debsDataAvgPwrMf02"));
-		
-
-
-		//mf03
-		DataStream<KeyedDataPoint<Double>> debsDataMf03;
-		debsDataMf03 = 	env.readTextFile(params.get("input"))
-				.setParallelism(1)
-				.map(new ParseData("mf03"));
-		debsDataMf03.addSink(new InfluxDBSink<>("debsDataMf03"));
-		DataStream<KeyedDataPoint<Double>> debsDataRangeBufferMf03 = debsDataMf03
-
-				.assignTimestampsAndWatermarks(new ExtractTimestamp())
-				.setParallelism(1)
-				.keyBy("key")
-				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
-				.apply(new MovingRangeFunctionBuffer());
-		debsDataRangeBufferMf03.addSink(new InfluxDBSink<>("debsDataRangeBufferMf03"));
-
-		//∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨
-
-		env.readTextFile(params.get("input"))
-
-				.setParallelism(1)
-				.map(new ParseData("mf03"))
-				.assignTimestampsAndWatermarks(new ExtractTimestamp())
-				.keyBy("key")
-				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
-				.apply(new MovingRangeFunction())
-				.addSink(new InfluxDBSink<>("debsDataRangeMf03"));
-		//∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧∧
-
-		DataStream<KeyedDataPoint<Double>> debsDataRangeMf03;
-		debsDataRangeMf03 = env.readTextFile(params.get("input"))
-				.setParallelism(1)
-				.map(new ParseData("mf03"))
-				.assignTimestampsAndWatermarks(new ExtractTimestamp())
-				.keyBy("key")
-				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
-				.apply(new MovingRangeFunction());
-
-		DataStream<KeyedDataPoint<Double>> debsDataRangeErrorsMf03 = debsDataRangeMf03
-
-				.keyBy("key")
-				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
-				.apply(new RangeErrorFunction());
-		debsDataRangeErrorsMf03.addSink(new InfluxDBSink<>("debsDataRangeErrorsMf03"));
-		DataStream<KeyedDataPoint<Double>> debsDataAvgMf03 = debsDataMf03
-				.assignTimestampsAndWatermarks(new ExtractTimestamp())
-				.keyBy("key")
-				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
-				.apply(new MovingAverageFunction());
-		debsDataAvgMf03.addSink(new InfluxDBSink<>("debsDataAvgMf03"));
-		DataStream<KeyedDataPoint<Double>> debsDataAvgPwrMf03 = debsDataAvgMf03
-				.keyBy("key")
-				.window(SlidingEventTimeWindows.of(Time.seconds(60), Time.seconds(60)))
-				.apply(new MovingAverageFunctionOperator());
-		debsDataAvgPwrMf03.addSink(new InfluxDBSink<>("debsDataAvgPwrMf03"));
+				.apply(new MovingAveragePwr());
+		//debsDataAvgPwr.writeAsText(params.get("output"), FileSystem.WriteMode.OVERWRITE).setParallelism(1);
+		debsDataAvgPwr.addSink(new InfluxDBSink<>("debsDataAvgPwr"));
 
 		env.execute("debsChallenge");
+
+		long end = System.currentTimeMillis();
+		System.out.println(end-start);
+//		try{
+//			PrintWriter writer = new PrintWriter(params.get("output2"), "UTF-8");
+//			writer.println(end-start);
+//			writer.close();
+//		} catch (IOException e) {
+//			// do something
+//		}
 	}
 }
 		/*DataStream<KeyedDataPoint<Double>> debsdata20sec70sec = debsData
@@ -234,7 +164,7 @@ public class slidingWindowDebsChallenge {
 				.assignTimestampsAndWatermarks(new ExtractTimestamp())
 				.keyBy("key")
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
-				.apply(new MovingRangeFunction());
+				.apply(new MovingRange());
 		*/
 		/*
 		//∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨∨

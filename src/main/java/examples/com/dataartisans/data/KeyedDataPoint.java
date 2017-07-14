@@ -11,14 +11,14 @@ public class KeyedDataPoint<T> extends DataPoint<T> implements Serializable {
     this.key = null;
   }
 
-  public KeyedDataPoint(String key, long timeStampMs, T value) {
-    super(timeStampMs, value);
+  public KeyedDataPoint(String key, long timeStampMs, T mf01, T mf02, T mf03) {
+    super(timeStampMs, mf01, mf02,mf03);
     this.key = key;
   }
 
   @Override
   public String toString() {
-    return getTimeStampMs() + "," + getKey() + "," + getValue();
+    return getTimeStampMs() + "," + getKey() + "," + getMf01();
   }
 
   public String getKey() {
@@ -29,8 +29,8 @@ public class KeyedDataPoint<T> extends DataPoint<T> implements Serializable {
     this.key = key;
   }
 
-  public <R> KeyedDataPoint<R> withNewValue(R newValue){
-    return new KeyedDataPoint<>(this.getKey(), this.getTimeStampMs(), newValue);
+  public <R> KeyedDataPoint<R> withNewValue(R mf01, R mf02, R mf03){
+    return new KeyedDataPoint<>(this.getKey(), this.getTimeStampMs(), mf01, mf02, mf03);
   }
 
 }

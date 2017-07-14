@@ -5,7 +5,7 @@
    - **quickstart** <br>
    - **examples**:<br>
       - **com.dataartisans** <-- this contains a simple version of the oscon example from dataartisans (see below the link),                       plus one implementation of moving average using KeyedDapoint <br>
-      - **examples.com.dataartisans.functions.MovingAverageFunction** (NOTE: this function is used in example   sliding_window2.java )<br>    
+      - **examples.com.dataartisans.functions.MovingAverage** (NOTE: this function is used in example   sliding_window2.java )<br>    
    - **windowing**: <br>
       - GroupedProcessingTimeWindowExample.java <br>
       - SessionWindowing.java<br>

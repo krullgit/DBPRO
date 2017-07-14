@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f547f8fc-1b95-4bb8-8c5c-930dba44413a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java" afterPath="$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java" />
-    </list>
+    <list default="true" id="f547f8fc-1b95-4bb8-8c5c-930dba44413a" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,8 +16,8 @@
       <file leaf-file-name="slidingWindowDebsChallenge.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="244">
-              <caret line="43" column="40" lean-forward="false" selection-start-line="43" selection-start-column="40" selection-end-line="43" selection-end-column="40" />
+            <state relative-caret-position="329">
+              <caret line="90" column="38" lean-forward="false" selection-start-line="90" selection-start-column="38" selection-end-line="90" selection-end-column="38" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -956,12 +954,12 @@
       <workItem from="1498843393428" duration="7372000" />
       <workItem from="1498865754694" duration="230000" />
       <workItem from="1498866100035" duration="11961000" />
-      <workItem from="1500024794437" duration="3296000" />
+      <workItem from="1500024794437" duration="3872000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="282318000" />
+    <option name="totallyTimeSpent" value="282894000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1331,8 +1329,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/examples/windowing/slidingWindowDebsChallenge.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="244">
-          <caret line="43" column="40" lean-forward="false" selection-start-line="43" selection-start-column="40" selection-end-line="43" selection-end-column="40" />
+        <state relative-caret-position="329">
+          <caret line="90" column="38" lean-forward="false" selection-start-line="90" selection-start-column="38" selection-end-line="90" selection-end-column="38" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

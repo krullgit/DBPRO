@@ -29,9 +29,6 @@ import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer08;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 
-import static com.sun.tools.doclint.Entity.sum;
-
-
 public class slidingWindowDebsChallenge {
 
 
@@ -41,7 +38,7 @@ public class slidingWindowDebsChallenge {
 
 		long start = System.currentTimeMillis();
 
-		final double errortreshold = 0.3;
+		final double errortreshold = 0.27;
 
 		final ParameterTool params = ParameterTool.fromArgs(args);
 
@@ -51,28 +48,29 @@ public class slidingWindowDebsChallenge {
 		// we need event time since we since it fits to our window constraints (1 and 60 seconds of event time)
 		env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
-		/*
+
 		// READ FROM KAFKA
 		Properties properties = new Properties();
 		properties.setProperty("bootstrap.servers", "localhost:9092");
 		properties.setProperty("group.id", "test");
 
 		FlinkKafkaConsumer010<String> myConsumer =
-				new FlinkKafkaConsumer010<>("debsData6", new SimpleStringSchema(), properties);
+				new FlinkKafkaConsumer010<>("debsData7", new SimpleStringSchema(), properties);
 
 		// Parse Data
 		DataStream<KeyedDataPoint<Double>> debsData = env
 				.setParallelism(1)
 				.addSource(myConsumer)
-				.map(new ParseData());*/
-
+				.map(new ParseData());
+		/*
 		// READ FROM FILE
 		// test with this parameters: -input ./src/main/resources/DEBS2012-ChallengeData-Sample.csv
 		DataStream<KeyedDataPoint<Double>> debsData = env.readTextFile(params.get("input"))
 				.setParallelism(2)
 				.map(new ParseData());
+		*/
+		debsData.addSink(new InfluxDBSink<>("debsData"));
 
-		//debsData.addSink(new InfluxDBSink<>("debsData"));
 
 		// Save 20 sec before and 70 sec after an error
 		DataStream<KeyedDataPoint<Double>> debsDataRangeBuffer = debsData
@@ -82,7 +80,7 @@ public class slidingWindowDebsChallenge {
 				.apply(new MovingRangeBuffer(errortreshold));
 
 		//debsDataRangeBuffer.writeAsText(params.get("output"), FileSystem.WriteMode.OVERWRITE);
-		//debsDataRangeBuffer.addSink(new InfluxDBSink<>("debsDataRangeBuffer"));
+		debsDataRangeBuffer.addSink(new InfluxDBSink<>("debsDataRangeBuffer"));
 
 		// calculate the range
 		DataStream<KeyedDataPoint<Double>> debsDataRange = debsData
@@ -91,7 +89,7 @@ public class slidingWindowDebsChallenge {
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new MovingRange());
 		//debsDataRange.writeAsText(params.get("output"), FileSystem.WriteMode.OVERWRITE);
-		//debsDataRange.addSink(new InfluxDBSink<>("debsDataRange"));
+		debsDataRange.addSink(new InfluxDBSink<>("debsDataRange"));
 
 		// calculate the errors based in the range
 		DataStream<KeyedDataPoint<Double>> debsDataRangeErrors = debsDataRange
@@ -99,7 +97,7 @@ public class slidingWindowDebsChallenge {
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new MovingRangeError(errortreshold));
 		//debsDataRangeErrors.writeAsText(params.get("output"), FileSystem.WriteMode.OVERWRITE);
-		//debsDataRangeErrors.addSink(new InfluxDBSink<>("debsDataRangeErrors"));
+		debsDataRangeErrors.addSink(new InfluxDBSink<>("debsDataRangeErrors"));
 
 		// calculate the avg
 		DataStream<KeyedDataPoint<Double>> debsDataAvg = debsData
@@ -108,7 +106,7 @@ public class slidingWindowDebsChallenge {
 				.window(SlidingEventTimeWindows.of(Time.seconds(1), Time.seconds(1)))
 				.apply(new MovingAverage());
 		//debsDataAvg.writeAsText(params.get("output"), FileSystem.WriteMode.OVERWRITE);
-		//debsDataAvg.addSink(new InfluxDBSink<>("debsDataAvg"));
+		debsDataAvg.addSink(new InfluxDBSink<>("debsDataAvg"));
 
 		// calculate power consumption
 		DataStream<KeyedDataPoint<Double>> debsDataAvgPwr = debsDataAvg
@@ -116,7 +114,7 @@ public class slidingWindowDebsChallenge {
 				.window(SlidingEventTimeWindows.of(Time.seconds(60), Time.seconds(60)))
 				.apply(new MovingAveragePwr());
 		//debsDataAvgPwr.writeAsText(params.get("output"), FileSystem.WriteMode.OVERWRITE);
-		//debsDataAvgPwr.addSink(new InfluxDBSink<>("debsDataAvgPwr"));
+		debsDataAvgPwr.addSink(new InfluxDBSink<>("debsDataAvgPwr"));
 
 		env.execute("debsChallenge");
 

@@ -20,7 +20,7 @@ public class kafkaProducer{
         props.put("key.serializer","org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
-        String topicName = "debsData6";
+        String topicName = "debsData7";
         String key = "Key";
 
         File testfile = new File("/Users/matthes/Desktop/passt_nicht_in_gdrive/dbpro/DEBS2012-ChallengeData-Sample.csv");

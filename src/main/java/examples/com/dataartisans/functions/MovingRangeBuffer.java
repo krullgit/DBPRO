@@ -70,20 +70,16 @@ public class MovingRangeBuffer implements WindowFunction<KeyedDataPoint<Double>,
                 while(bufferlist.get(bufferlist.size() - 1).getTimeStampMs()>bufferlist.get(0).getTimeStampMs()+20000){
                 //while (Instant.ofEpochMilli(bufferlist.get(bufferlist.size() - 1).getTimeStampMs()).atZone(ZoneId.of("UTC+1")).toLocalTime().minus(20, SECONDS).compareTo(Instant.ofEpochMilli(bufferlist.get(0).getTimeStampMs()).atZone(ZoneId.of("UTC+1")).toLocalTime()) > 0) {
                     //delete every tuple that has come later than 20 sec before
-
-                    System.out.println(bufferlist.get(bufferlist.size() - 1).getTimeStampMs());
                     bufferlist.remove(0);
                 }
             // or additional the future 70 sec
             } else {
 
                 // is the latest tuple 70 sec in future of the last anomaly?
+                //if (Instant.ofEpochMilli(bufferAlertElementTime).atZone(ZoneId.of("UTC+1")).toLocalTime().plus(70, SECONDS).compareTo(Instant.ofEpochMilli(bufferlist.get(bufferlist.size() - 1).getTimeStampMs()).atZone(ZoneId.of("UTC+1")).toLocalTime()) < 0) {
                 if(bufferlist.get(bufferlist.size() - 1).getTimeStampMs()>bufferAlertElementTime+70000){
                     bufferextend = false; // since buffer is complete reset the bufferextend variable
                 }
-                /*if (Instant.ofEpochMilli(bufferAlertElementTime).atZone(ZoneId.of("UTC+1")).toLocalTime().plus(70, SECONDS).compareTo(Instant.ofEpochMilli(bufferlist.get(bufferlist.size() - 1).getTimeStampMs()).atZone(ZoneId.of("UTC+1")).toLocalTime()) < 0) {
-                    bufferextend = false; // since buffer is complete reset the bufferextend variable
-                }*/
                 // save hole buffer to influx
                 for (KeyedDataPoint<Double> ready : bufferlist) {
                     out.collect(ready);
